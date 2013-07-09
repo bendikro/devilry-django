@@ -2,6 +2,7 @@
 
 from os import system
 
+//TODO fix smarter script using GITHUB API
 
 ro = ('tworide', 'rebekkjm', 'vegarang', 'espenak', 'bendikro', 'klfd4', 'devilry')
 repos = ['{0}-ro'.format(name) for name in ro]
