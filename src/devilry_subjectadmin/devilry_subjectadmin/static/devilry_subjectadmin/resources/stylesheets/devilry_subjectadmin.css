@@ -17,30 +17,18 @@
 }
 /* line 21, ../sass/devilry_subjectadmin.scss */
 .devilry_subjectadmin_dangerousactions .body {
-  border: 1px solid #ccc !important;
+  border: 1px solid #cccccc !important;
   -moz-border-radius-topleft: 0;
   -webkit-border-top-left-radius: 0;
-  -o-border-top-left-radius: 0;
-  -ms-border-top-left-radius: 0;
-  -khtml-border-top-left-radius: 0;
   border-top-left-radius: 0;
   -moz-border-radius-topright: 6px;
   -webkit-border-top-right-radius: 6px;
-  -o-border-top-right-radius: 6px;
-  -ms-border-top-right-radius: 6px;
-  -khtml-border-top-right-radius: 6px;
   border-top-right-radius: 6px;
   -moz-border-radius-bottomleft: 6px;
   -webkit-border-bottom-left-radius: 6px;
-  -o-border-bottom-left-radius: 6px;
-  -ms-border-bottom-left-radius: 6px;
-  -khtml-border-bottom-left-radius: 6px;
   border-bottom-left-radius: 6px;
   -moz-border-radius-bottomright: 6px;
   -webkit-border-bottom-right-radius: 6px;
-  -o-border-bottom-right-radius: 6px;
-  -ms-border-bottom-right-radius: 6px;
-  -khtml-border-bottom-right-radius: 6px;
   border-bottom-right-radius: 6px;
 }
 
@@ -56,13 +44,12 @@
 
 /* line 40, ../sass/devilry_subjectadmin.scss */
 .devilry_subjectadmin_editsidebarcontainer {
-  border: 1px dotted #ccc;
+  border: 1px dotted #cccccc;
   border-right: none;
-  -moz-border-radius: 6px 0 0 6px;
   -webkit-border-radius: 6px 0 0 6px;
-  -o-border-radius: 6px 0 0 6px;
+  -moz-border-radius: 6px 0 0 6px;
   -ms-border-radius: 6px 0 0 6px;
-  -khtml-border-radius: 6px 0 0 6px;
+  -o-border-radius: 6px 0 0 6px;
   border-radius: 6px 0 0 6px;
 }
 /* line 45, ../sass/devilry_subjectadmin.scss */
@@ -81,8 +68,62 @@
   line-height: 24px;
 }
 
-/* line 2, ../sass/_managestudents.scss */
+/* line 4, ../sass/_managestudents.scss */
 .listofgroups .col2Wrapper {
   text-align: right;
   padding-right: 15px;
+}
+
+/* line 10, ../sass/_managestudents.scss */
+.devilry_checkboxlist {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+/* line 12, ../sass/_managestudents.scss */
+.devilry_checkboxlist .devilry_checkboxlist_item {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 5px 0 5px 0;
+  height: 70px;
+  position: relative;
+}
+/* line 17, ../sass/_managestudents.scss */
+.devilry_checkboxlist .devilry_checkboxlist_item .checkboxwrapper {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  height: 100%;
+  width: 45px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+/* line 24, ../sass/_managestudents.scss */
+.devilry_checkboxlist .devilry_checkboxlist_item .checkboxwrapper input[type=checkbox] {
+  position: absolute;
+  top: 40%;
+  left: 40%;
+}
+/* line 30, ../sass/_managestudents.scss */
+.devilry_checkboxlist .devilry_checkboxlist_item .contentwrapper {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+  padding-left: 55px;
+}
+/* line 37, ../sass/_managestudents.scss */
+.devilry_checkboxlist .devilry_checkboxlist_item .checkboxwrapper, .devilry_checkboxlist .devilry_checkboxlist_item .contentwrapper {
+  background-color: #ddd;
+}
+/* line 39, ../sass/_managestudents.scss */
+.devilry_checkboxlist .devilry_checkboxlist_item .checkboxwrapper:hover, .devilry_checkboxlist .devilry_checkboxlist_item .contentwrapper:hover {
+  background-color: #aaa;
+}
+/* line 45, ../sass/_managestudents.scss */
+.devilry_checkboxlist .devilry_checkboxlist_item.selected .contentwrapper {
+  background-color: #aaa;
 }

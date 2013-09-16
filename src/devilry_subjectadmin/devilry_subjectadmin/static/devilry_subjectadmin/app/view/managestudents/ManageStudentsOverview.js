@@ -8,6 +8,7 @@ Ext.define('devilry_subjectadmin.view.managestudents.ManageStudentsOverview' ,{
     requires: [
         'devilry_subjectadmin.view.managestudents.HelpPanel',
         'devilry_subjectadmin.view.managestudents.ListOfGroups',
+        'devilry_subjectadmin.view.managestudents.FastListOfGroups',
         'devilry_subjectadmin.view.managestudents.NoGroupSelectedView',
         'devilry_subjectadmin.view.managestudents.SingleGroupSelectedView',
         'devilry_subjectadmin.view.managestudents.MultipleGroupsSelectedView'
@@ -41,11 +42,12 @@ Ext.define('devilry_subjectadmin.view.managestudents.ManageStudentsOverview' ,{
             frame: false,
             style: 'background-color: transparent !important;',
             items: [{
-                xtype: 'listofgroups',
+                xtype: 'fastlistofgroups',
+                //xtype: 'listofgroups',
                 region: 'west',
                 border: true,
                 frame: false,
-                width: 390, // Default width
+                width: 360, // Default width
                 minWidth: 260, // Wont be able to make it smaller than this
 
                 // Only resize to the right (east)

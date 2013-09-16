@@ -1,6 +1,50 @@
+@import "compass/css3/box-sizing";
+
 .listofgroups {
     .col2Wrapper {
         text-align: right;
         padding-right: 15px;
+    }
+}
+
+.devilry_checkboxlist {
+    @include box-sizing(border-box);
+    .devilry_checkboxlist_item{
+        @include box-sizing(border-box);
+        margin: 5px 0 5px 0;
+        height: 70px;
+        position: relative;
+        .checkboxwrapper {
+            @include box-sizing(border-box);
+            height: 100%;
+            width: 45px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            input[type=checkbox] {
+                position: absolute;
+                top: 40%;
+                left: 40%;
+            }
+        }
+        .contentwrapper {
+            @include box-sizing(border-box);
+            height: 100%;
+            width: 100%;
+            padding-left: 55px;
+        }
+
+        .checkboxwrapper, .contentwrapper {
+            background-color: #ddd;
+            &:hover {
+                background-color: #aaa;
+            }
+        }
+
+        &.selected {
+            .contentwrapper {
+                background-color: #aaa;
+            }
+        }
     }
 }

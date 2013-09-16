@@ -27,7 +27,7 @@ Ext.define('devilry_subjectadmin.controller.managestudents.Select', {
 
     refs: [{
         ref: 'listOfGroups',
-        selector: 'listofgroups'
+        selector: 'fastlistofgroups'
     }],
 
     init: function() {
@@ -159,7 +159,8 @@ Ext.define('devilry_subjectadmin.controller.managestudents.Select', {
      **********************************************/
 
     _onSelectAll: function() {
-        this.getListOfGroups().getSelectionModel().selectAll();
+        //this.getListOfGroups().getSelectionModel().selectAll();
+        this.getListOfGroups().selectAll();
     },
     _onDeselectAll: function() {
         this.getListOfGroups().getSelectionModel().deselectAll();
