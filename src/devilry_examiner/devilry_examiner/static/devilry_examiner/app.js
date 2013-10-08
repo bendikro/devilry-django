@@ -10,7 +10,7 @@
       'devilry_authenticateduserinfo': DevilrySettings.DEVILRY_STATIC_URL + '/devilry_authenticateduserinfo'
     },
     requires: ['Ext.container.Viewport', 'Ext.layout.container.Border', 'Ext.layout.container.Column', 'Ext.layout.container.Card', 'devilry_extjsextras.Router', 'devilry_extjsextras.RouteNotFound', 'devilry_extjsextras.AlertMessage', 'devilry_header.Header', 'devilry_header.Breadcrumbs', 'devilry_extjsextras.FloatingAlertmessageList', 'devilry_authenticateduserinfo.UserInfo'],
-    controllers: ['DashboardController'],
+    controllers: ['DashboardController', 'AssignmentController'],
     refs: [
       {
         ref: 'alertmessagelist',
@@ -96,6 +96,7 @@
         }
       });
       this.route.add("", 'dashboard');
+      this.route.add("/assignment/:assignmentId", 'assignment');
       return this.route.start();
     },
     _beforeRoute: function(route, routeInfo) {
@@ -112,6 +113,13 @@
       this.breadcrumbs.setHome();
       return this.setPrimaryContent({
         xtype: 'dashboard'
+      });
+    },
+    assignment: function(routeInfo, assignmentId) {
+      this.breadcrumbs.setHome();
+      return this.setPrimaryContent({
+        xtype: 'assignmentworkspace',
+        assignmentId: assignmentId
       });
     }
   });
