@@ -14,16 +14,16 @@
     }
 
     // These are set by the ExtJS theme, however we want the default bootstrap styles!
-    ul li {
-        list-style: disc outside none;
-    }
-    ul.unstyled,
-    ol.unstyled {
-        &> li {
-            margin-left: 0;
-            list-style: none;
-        }
-    }
+    //ul li {
+        //list-style: disc outside none;
+    //}
+    //ul.unstyled,
+    //ol.unstyled {
+        //&> li {
+            //margin-left: 0;
+            //list-style: none;
+        //}
+    //}
 
     .oneline_ellipsis {
         white-space: nowrap;
