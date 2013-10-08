@@ -1,3 +1,7 @@
+@import "compass/reset/utilities";
+
+
+
 // The default font
 @font-face {
   font-family: 'Ubuntu';
@@ -11,10 +15,14 @@
 @import "bootstrap/variables";
 .bootstrap {
     // CSS Reset
-    //@import "bootstrap/reset"; NOTE: We do not reset, because it would reset ExtJS styles
+    //@import "bootstrap/reset"; // NOTE: We do not reset, because it would reset ExtJS styles
+    //@import "bootstrap/reset";
+    @include nested-reset();
 
     // Grid system and page structure
     @import "bootstrap/scaffolding";
+    @import "bootstrap/grid";
+    @import "bootstrap/layouts";
 
     // Base CSS
     @import "bootstrap/type";
@@ -54,6 +62,7 @@
     @import "bootstrap/hero-unit";
 
     // Utility classes
+    @import "bootstrap/responsive-utilities";
     @import "bootstrap/utilities"; // Has to be last to override when necessary
 }
 
