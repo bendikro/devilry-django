@@ -9,7 +9,7 @@ coffeeBuildDir = path.join('..', '..', 'static', 'devilry_examiner')
 coffeeCmd = path.join(npmBinDir, 'coffee')
 
 
-coffee = (options, onError=null, onSuccess=null) ->
+coffee = (options, callbacks={}) ->
     coffee = spawn(coffeeCmd, options)
     coffee.stderr.on 'data', (data) ->
         process.stderr.write data.toString()
@@ -17,21 +17,16 @@ coffee = (options, onError=null, onSuccess=null) ->
         print data.toString()
     coffee.on 'exit', (code) ->
         if code == 0
-            if onSuccess?
-                onSuccess()
+            callbacks.onSuccess?()
         else
-            if onError
-                onError(code)
+            callbacks.onError?()
 
-coffeeBuildAll = (onSuccess) ->
-    coffee(['-c', '-o', coffeeBuildDir, coffeeSourceDir]
-        , (code) ->
+coffeeBuildAll = ->
+    coffee ['-c', '-o', coffeeBuildDir, coffeeSourceDir],
+        onError: (code) ->
             console.error 'Build FAILED with exit-code:', code
-        , ->
+        onSuccess: ->
             console.log 'Build successful'
-            if onSuccess?
-                onSuccess()
-    )
 
 task 'coffeeBuild', 'Build the coffeescript sources.', ->
     coffeeBuildAll()
