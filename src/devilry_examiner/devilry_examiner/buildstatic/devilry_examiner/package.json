@@ -1,0 +1,9 @@
+{
+  "name": "devilry_examiner_cakefile",
+  "description": "Dependencies for the devilry_examiner Cakefile",
+  "version": "1.0.0",
+  "dependencies": {
+    "coffee-script": "1.6.x"
+  },
+  "engine": "node >= 0.8.14"
+}

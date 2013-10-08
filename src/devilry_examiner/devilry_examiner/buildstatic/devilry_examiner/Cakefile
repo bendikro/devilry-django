@@ -1,0 +1,39 @@
+{print} = require 'util'
+{spawn} = require 'child_process'
+
+
+coffeeSourceDir = '.'
+coffeeBuildDir = '../../static/devilry_examiner/'
+coffeeCmd = 'node_modules/.bin/coffee'
+
+
+coffee = (options, onError=null, onSuccess=null) ->
+    coffee = spawn(coffeeCmd, options)
+    coffee.stderr.on 'data', (data) ->
+        process.stderr.write data.toString()
+    coffee.stdout.on 'data', (data) ->
+        print data.toString()
+    coffee.on 'exit', (code) ->
+        if code == 0
+            if onSuccess?
+                onSuccess()
+        else
+            if onError
+                onError(code)
+
+coffeeBuildAll = (onSuccess) ->
+    coffee(['-c', '-o', coffeeBuildDir, coffeeSourceDir]
+        , (code) ->
+            console.error 'Build FAILED with exit-code:', code
+        , ->
+            console.log 'Build successful'
+            if onSuccess?
+                onSuccess()
+    )
+
+task 'coffeeBuild', 'Build the coffeescript sources.', ->
+    coffeeBuildAll()
+
+task 'coffeeWatch', 'Watch the coffeescript sources for changes, and rebuild automatically.', ->
+    coffee(['-o', coffeeBuildDir, '-cw', coffeeSourceDir])
+
