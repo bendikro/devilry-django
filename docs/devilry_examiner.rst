@@ -28,3 +28,10 @@ To compile the CoffeeScript sources to JS on each change, use the
 
     $ cd src/devilry_examiner/devilry_examiner/buildstatic/devilry_examiner/
     $ node_modules/.bin/cake coffeeWatch
+
+Just keep the ``coffeeWatch`` task running in a terminal while you develop.
+
+
+Tips
+====
+For vim, you may want to install Syntastic to get CoffeeScript error messages to get syntax error messages in the editor.
