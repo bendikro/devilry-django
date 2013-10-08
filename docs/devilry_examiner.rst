@@ -35,3 +35,11 @@ Just keep the ``coffeeWatch`` task running in a terminal while you develop.
 Tips
 ====
 For vim, you may want to install Syntastic to get CoffeeScript error messages to get syntax error messages in the editor.
+
+
+Building the CSS
+################
+Just like ExtJS, we use compass/sass for our stylesheets. To build the css, run the following::
+
+    $ cd src/devilry_examiner/devilry_examiner/buildstatic/devilry_examiner/
+    $ compass watch
