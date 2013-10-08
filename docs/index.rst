@@ -66,6 +66,7 @@ Apps
 * :ref:`devilry_subjectadmin`
 * :doc:`devilry_qualifiesforexam`
 * :doc:`devilry_search`
+* :doc:`devilry_examiner`
 
 .. note:: The apps listing is incomplete.
 
@@ -99,6 +100,7 @@ Table of contents
     devilry_subjectadmin
     devilry_qualifiesforexam
     devilry_search
+    devilry_examiner
 
     apps.gradeeditors
     devilry.utils
