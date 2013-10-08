@@ -39,6 +39,7 @@ Tips
   be able to get error messages directly into the coffee-mode
   buffers. Details below.
 
+
 Emacs + Flycheck + Coffeelint
 =============================
 Follow the install instructions on http://flycheck.github.io/ and
@@ -50,3 +51,11 @@ Edit the ``indentation`` to ``4`` spaces and the ``max-line-length``
 to ``120`` and put somewhere upwards the directory hierarky for
 flycheck to automatically pick it up. The root of your home directory
 might be a good place.
+
+
+Building the CSS
+################
+Just like ExtJS, we use compass/sass for our stylesheets. To build the css, run the following::
+
+    $ cd src/devilry_examiner/devilry_examiner/buildstatic/devilry_examiner/
+    $ compass watch
