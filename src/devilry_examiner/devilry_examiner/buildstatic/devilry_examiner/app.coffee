@@ -25,6 +25,7 @@ Ext.application({
 
     controllers: [
         'DashboardController'
+        'AssignmentController'
     ]
 
     refs: [{
@@ -100,28 +101,36 @@ Ext.application({
     ###
 
     _setupRoutes: ->
-        this.route = Ext.create('devilry_extjsextras.Router', this, {
+        @route = Ext.create('devilry_extjsextras.Router', this, {
             listeners: {
                 scope: this
-                beforeroute: this._beforeRoute
+                beforeroute: @_beforeRoute
             }
         })
-        this.route.add("", 'dashboard')
-        this.route.start()
+        @route.add("", 'dashboard')
+        @route.add("/assignment/:assignmentId", 'assignment')
+        @route.start()
 
     _beforeRoute: (route, routeInfo) ->
-        this.getAlertmessagelist().removeAll()
+        @getAlertmessagelist().removeAll()
 
     routeNotFound: (routeInfo) ->
-        this.breadcrumbs.set([], gettext('Route not found'))
-        this.setPrimaryContent({
+        @breadcrumbs.set([], gettext('Route not found'))
+        @setPrimaryContent({
             xtype: 'routenotfound'
             route: routeInfo.token
         })
 
     dashboard: ->
-        this.breadcrumbs.setHome()
-        this.setPrimaryContent({
+        @breadcrumbs.setHome()
+        @setPrimaryContent({
             xtype: 'dashboard'
+        })
+
+    assignment: (routeInfo, assignmentId) ->
+        @breadcrumbs.setHome()
+        @setPrimaryContent({
+            xtype: 'assignmentworkspace',
+            assignmentId: assignmentId
         })
 })

@@ -1,7 +1,7 @@
 Ext.define('devilry_examiner.view.dashboard.Dashboard', {
     extend: 'Ext.container.Container'
     alias: 'widget.dashboard'
-    cls: 'dashboard'
+    cls: 'devilry_dashboard'
 
     layout: 'fit'
     padding: '40'
