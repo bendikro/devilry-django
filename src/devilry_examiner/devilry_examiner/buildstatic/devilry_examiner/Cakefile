@@ -1,10 +1,12 @@
+path = require('path')
 {print} = require 'util'
 {spawn} = require 'child_process'
 
 
+npmBinDir = path.join('node_modules', '.bin')
 coffeeSourceDir = '.'
-coffeeBuildDir = '../../static/devilry_examiner/'
-coffeeCmd = 'node_modules/.bin/coffee'
+coffeeBuildDir = path.join('..', '..', 'static', 'devilry_examiner')
+coffeeCmd = path.join(npmBinDir, 'coffee')
 
 
 coffee = (options, onError=null, onSuccess=null) ->
