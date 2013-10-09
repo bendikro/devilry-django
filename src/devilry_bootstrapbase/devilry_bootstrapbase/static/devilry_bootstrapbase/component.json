@@ -1,0 +1,7 @@
+{
+  "name": "autoinn_accountingdata",
+  "version": "0.0.0",
+  "dependencies": {
+    "sass-bootstrap-compass": "~3.0.16"
+  }
+}
