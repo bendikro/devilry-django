@@ -92,7 +92,7 @@ class TestListGroupRest(TestCase):
         self.assertEquals(set(get_usernames(content[0]['candidates'])),
                           set(['student0', 'extrastudent']))
         self.assertEquals(set(content[0]['candidates'][0].keys()),
-                          set(['id', 'candidate_id', 'user']))
+                          set(['id', 'candidate_id', 'user', 'identifier']))
         self.assertEquals(set(content[0]['candidates'][0]['user'].keys()),
                           set(['email', 'full_name', 'id', 'username', 'displayname']))
 

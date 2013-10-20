@@ -17,6 +17,10 @@ from devilry.apps.core.models import AssignmentGroup
 from devilry.apps.core.models import AssignmentGroupTag
 from devilry.apps.core.models import Delivery
 from devilry.apps.core.models import Assignment
+from devilry.apps.core.serialize.group import serialize_deadlines
+from devilry.apps.core.serialize.group import serialize_examiners
+from devilry.apps.core.serialize.group import serialize_candidates
+from devilry.apps.core.serialize.feedback import serialize_feedback
 
 from .errors import ValidationErrorResponse
 from .errors import NotFoundError
@@ -143,12 +147,8 @@ class GroupSerializer(object):
     def __init__(self, group):
         self.group = group
 
-    def _serialize_deadline(self, deadline):
-        return {'id': deadline.id,
-                'deadline': deadline.deadline}
-
     def serialize_deadlines(self):
-        return map(self._serialize_deadline, self.group.deadlines.all())
+        return serialize_deadlines(self.group)
 
     def _serialize_tag(self, tag):
         return {'id': tag.id,
@@ -160,12 +160,9 @@ class GroupSerializer(object):
     def serialize_feedback(self):
         feedback = self.group.feedback
         if feedback:
-            return {'id': feedback.id,
-                    'grade': feedback.grade,
-                    'delivery_id': feedback.delivery.id,
-                    'points': feedback.points,
-                    'is_passing_grade': feedback.is_passing_grade,
-                    'save_timestamp': feedback.save_timestamp}
+            serialized = serialize_feedback(feedback)
+            del serialized['rendered_view'] # Do not need to transfer this when it is not used.
+            return serialized
         else:
             return None
 
@@ -177,20 +174,11 @@ class GroupSerializer(object):
                 'displayname': full_name or user.username,
                 'full_name': full_name}
 
-    def _serialize_examiner(self, examiner):
-        return {'id': examiner.id,
-                'user': self._serialize_user(examiner.user)}
-
     def serialize_examiners(self):
-        return map(self._serialize_examiner, self.group.examiners.all())
-
-    def _serialize_candidate(self, candidate):
-        return {'id': candidate.id,
-                'candidate_id': candidate.candidate_id,
-                'user': self._serialize_user(candidate.student)}
+        return serialize_examiners(self.group)
 
     def serialize_candidates(self):
-        return map(self._serialize_candidate, self.group.candidates.all())
+        return serialize_candidates(self.group)
 
 
 class GroupManager(object):
