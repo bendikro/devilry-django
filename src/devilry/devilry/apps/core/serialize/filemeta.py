@@ -1,5 +1,5 @@
-from math import log
 from django.core.urlresolvers import reverse
+from math import log
 
 from .cache import serializedcache
 from ..models import StaticFeedback
