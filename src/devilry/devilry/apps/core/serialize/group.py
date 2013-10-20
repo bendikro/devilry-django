@@ -3,7 +3,6 @@ from ..models import AssignmentGroupTag
 from .cache import serializedcache
 from .deadline import serialize_deadline
 from .user import serialize_user
-from .user import serialize_user
 from .candidate import serialize_candidate
 from .candidate import serialize_candidate_anonymous
 
