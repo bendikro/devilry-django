@@ -28,6 +28,7 @@ class TestSerializeFeedback(TestCase):
             'id': self.feedback.id,
             'is_passing_grade': True,
             'points': 85,
+            'delivery_id': self.delivery.id,
             'rendered_view': 'This is a default static feedback',
             'save_timestamp': '2013-01-01 00:00:00'})
 
@@ -36,5 +37,6 @@ class TestSerializeFeedback(TestCase):
             'grade': 'C',
             'id': self.feedback.id,
             'is_passing_grade': True,
+            'delivery_id': self.delivery.id,
             'rendered_view': 'This is a default static feedback',
             'save_timestamp': '2013-01-01 00:00:00'})
