@@ -1,4 +1,3 @@
-from devilry.utils.restformat import format_datetime
 from ..models import Candidate
 from .cache import serializedcache
 from .user import serialize_user
