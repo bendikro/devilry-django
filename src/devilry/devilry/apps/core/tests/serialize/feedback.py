@@ -11,8 +11,7 @@ class TestSerializeFeedback(TestCase):
         self.testhelper = TestHelper()
         self.testhelper.add(nodes="uni",
                  subjects=["sub"],
-                 periods=[
-                          "p1:admin(teacher1):begins(-1):ends(5)"],
+                 periods=["p1:admin(teacher1):begins(-1):ends(5)"],
                  assignments=["a1"],
                  assignmentgroups=["g1:candidate(student1):examiner(examiner1)"],
                  deadlines=['d1'])
