@@ -14,7 +14,7 @@ def _serialize_user(user):
 
 serializedcache.add(_serialize_user, {
     User: None,
-    DevilryUserProfile: lambda p: p.user
+    DevilryUserProfile: lambda p: [p.user]
 })
 
 

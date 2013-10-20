@@ -11,7 +11,7 @@ class SerializeCacheRegistryItem(object):
     def _get_cachekey(self, obj):
         return SerializeCacheRegistry.get_cachekey_from_serializemethod(self.serializer, obj)
 
-    def _get_object(self, sender, instance):
+    def _get_objects(self, sender, instance):
         objectfinder = self.modelclasses[sender]
         if not objectfinder:
             objectfinder = lambda o: o.pk
@@ -19,9 +19,9 @@ class SerializeCacheRegistryItem(object):
         return obj
 
     def _remove_from_cache(self, sender, instance):
-        obj = self._get_object(sender, instance)
-        cachekey = self._get_cachekey(obj)
-        cache.delete(cachekey)
+        for obj in self._get_objects(sender, instance):
+            cachekey = self._get_cachekey(obj)
+            cache.delete(cachekey)
 
     def _on_postsave(self, sender, instance, **kwargs):
         self._remove_from_cache(sender, instance)
