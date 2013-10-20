@@ -15,3 +15,4 @@ from .devilryuserprofile import *
 
 from .serialize.user import TestSerializeUser
 from .serialize.feedback import TestSerializeFeedback
+from .serialize.candidate import TestSerializeCandidate
