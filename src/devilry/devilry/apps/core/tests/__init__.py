@@ -12,3 +12,5 @@ from .memorydeliverystore import *
 from .fsdeliverystore import *
 from .testhelper import *
 from .devilryuserprofile import *
+
+from .serialize.user import TestSerializeUser

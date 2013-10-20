@@ -32,6 +32,57 @@ def pretty_filesize(num):
         return '1 byte'
 
 
+def serialize_feedback_without_points(staticfeedback):
+    return {'id': staticfeedback.id,
+            'rendered_view': staticfeedback.rendered_view,
+            'save_timestamp': format_datetime(staticfeedback.save_timestamp),
+            'grade': staticfeedback.grade,
+            # NOTE: points is not included because students are not supposed to get direct access to points.
+            'is_passing_grade': staticfeedback.is_passing_grade}
+
+def serialize_user(user):
+    return {'email': user.email,
+            'username': user.username,
+            'id': user.id,
+            'full_name': user.devilryuserprofile.full_name,
+            'displayname': user.devilryuserprofile.full_name or user.username}
+
+def serialize_candidate(candidate):
+    cand = {'id': candidate.id,
+            'user': serialize_user(candidate.student),
+            'candidate_id': candidate.candidate_id,
+            'identifier': candidate.identifier}
+    return cand
+
+
+def serialize_filemeta(filemeta):
+    return {'id': filemeta.id,
+            'filename': filemeta.filename,
+            'size': filemeta.size,
+            'download_url': reverse('devilry-delivery-file-download',
+                                    kwargs={'filemetaid': filemeta.id}),
+            'pretty_size': pretty_filesize(filemeta.size)}
+
+
+def serialize_delivery(delivery):
+    timedelta_before_deadline = delivery.deadline.deadline - delivery.time_of_delivery
+    delivered_by = None
+    if delivery.delivered_by:
+        delivered_by = serialize_candidate(delivery.delivered_by)
+    return {'id': delivery.id,
+            'number': delivery.number,
+            'delivered_by': delivered_by,
+            'after_deadline': delivery.after_deadline,
+            'time_of_delivery': format_datetime(delivery.time_of_delivery),
+            'offset_from_deadline': format_timedelta(timedelta_before_deadline),
+            'alias_delivery': delivery.alias_delivery_id,
+            'feedbacks': map(serialize_feedback_without_points, delivery.feedbacks.all()),
+            'download_all_url': {'zip': reverse('devilry-delivery-download-all-zip',
+                kwargs={'deliveryid': delivery.id})},
+            'filemetas': map(serialize_filemeta, delivery.filemetas.all())}
+
+
+
 class GroupResource(ModelResource, GroupResourceHelpersMixin):
     fields = ('id', 'name', 'is_open', 'candidates', 'deadlines', 'active_feedback',
               'deadline_handling', 'breadcrumbs', 'examiners', 'delivery_types',
@@ -40,7 +91,7 @@ class GroupResource(ModelResource, GroupResourceHelpersMixin):
 
 
     def candidates(self, instance):
-        return map(self.format_candidate, instance.candidates.all())
+        return map(serialize_candidate, instance.candidates.all())
 
     def format_feedback(self, staticfeedback):
         return {'id': staticfeedback.id,
@@ -50,30 +101,8 @@ class GroupResource(ModelResource, GroupResourceHelpersMixin):
                 # NOTE: points is not included because students are not supposed to get direct access to points.
                 'is_passing_grade': staticfeedback.is_passing_grade}
 
-    def format_filemeta(self, filemeta):
-        return {'id': filemeta.id,
-                'filename': filemeta.filename,
-                'size': filemeta.size,
-                'download_url': reverse('devilry-delivery-file-download',
-                                        kwargs={'filemetaid': filemeta.id}),
-                'pretty_size': pretty_filesize(filemeta.size)}
-
     def format_delivery(self, delivery):
-        timedelta_before_deadline = delivery.deadline.deadline - delivery.time_of_delivery
-        delivered_by = None
-        if delivery.delivered_by:
-            delivered_by = self.format_candidate(delivery.delivered_by)
-        return {'id': delivery.id,
-                'number': delivery.number,
-                'delivered_by': delivered_by,
-                'after_deadline': delivery.after_deadline,
-                'time_of_delivery': format_datetime(delivery.time_of_delivery),
-                'offset_from_deadline': format_timedelta(timedelta_before_deadline),
-                'alias_delivery': delivery.alias_delivery_id,
-                'feedbacks': map(self.format_feedback, delivery.feedbacks.all()),
-                'download_all_url': {'zip': reverse('devilry-delivery-download-all-zip',
-                                                    kwargs={'deliveryid': delivery.id})},
-                'filemetas': map(self.format_filemeta, delivery.filemetas.all())}
+        return serialize_delivery(delivery)
 
     def format_deliveries(self, deadline):
         return map(self.format_delivery, deadline.deliveries.filter(successful=True))
