@@ -1,11 +1,9 @@
 from datetime import datetime
-from math import log
 from djangorestframework.views import ModelView
 from djangorestframework.mixins import InstanceMixin
 from djangorestframework.mixins import ReadModelMixin
 from djangorestframework.resources import ModelResource
 from djangorestframework.permissions import IsAuthenticated
-from django.core.urlresolvers import reverse
 
 from devilry.apps.core.models import AssignmentGroup
 from .helpers import format_datetime
@@ -13,73 +11,10 @@ from .helpers import format_timedelta
 from .helpers import GroupResourceHelpersMixin
 from .helpers import IsPublishedAndCandidate
 
+from devilry.apps.core.serialize.candidate import serialize_candidate
+from devilry.apps.core.serialize.delivery import serialize_delivery
+from devilry.apps.core.serialize.feedback import serialize_feedback_without_points
 
-
-filesize_unit_list = zip(['bytes', 'kB', 'MB', 'GB', 'TB', 'PB'], [0, 0, 1, 2, 2, 2])
-def pretty_filesize(num):
-    """ Human friendly file size.
-    ref: http://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size
-    """
-    if num > 1:
-        exponent = min(int(log(num, 1024)), len(filesize_unit_list) - 1)
-        quotient = float(num) / 1024**exponent
-        unit, num_decimals = filesize_unit_list[exponent]
-        format_string = '{:.%sf} {}' % (num_decimals)
-        return format_string.format(quotient, unit)
-    if num == 0:
-        return '0 bytes'
-    if num == 1:
-        return '1 byte'
-
-
-def serialize_feedback_without_points(staticfeedback):
-    return {'id': staticfeedback.id,
-            'rendered_view': staticfeedback.rendered_view,
-            'save_timestamp': format_datetime(staticfeedback.save_timestamp),
-            'grade': staticfeedback.grade,
-            # NOTE: points is not included because students are not supposed to get direct access to points.
-            'is_passing_grade': staticfeedback.is_passing_grade}
-
-def serialize_user(user):
-    return {'email': user.email,
-            'username': user.username,
-            'id': user.id,
-            'full_name': user.devilryuserprofile.full_name,
-            'displayname': user.devilryuserprofile.full_name or user.username}
-
-def serialize_candidate(candidate):
-    cand = {'id': candidate.id,
-            'user': serialize_user(candidate.student),
-            'candidate_id': candidate.candidate_id,
-            'identifier': candidate.identifier}
-    return cand
-
-
-def serialize_filemeta(filemeta):
-    return {'id': filemeta.id,
-            'filename': filemeta.filename,
-            'size': filemeta.size,
-            'download_url': reverse('devilry-delivery-file-download',
-                                    kwargs={'filemetaid': filemeta.id}),
-            'pretty_size': pretty_filesize(filemeta.size)}
-
-
-def serialize_delivery(delivery):
-    timedelta_before_deadline = delivery.deadline.deadline - delivery.time_of_delivery
-    delivered_by = None
-    if delivery.delivered_by:
-        delivered_by = serialize_candidate(delivery.delivered_by)
-    return {'id': delivery.id,
-            'number': delivery.number,
-            'delivered_by': delivered_by,
-            'after_deadline': delivery.after_deadline,
-            'time_of_delivery': format_datetime(delivery.time_of_delivery),
-            'offset_from_deadline': format_timedelta(timedelta_before_deadline),
-            'alias_delivery': delivery.alias_delivery_id,
-            'feedbacks': map(serialize_feedback_without_points, delivery.feedbacks.all()),
-            'download_all_url': {'zip': reverse('devilry-delivery-download-all-zip',
-                kwargs={'deliveryid': delivery.id})},
-            'filemetas': map(serialize_filemeta, delivery.filemetas.all())}
 
 
 
@@ -94,12 +29,7 @@ class GroupResource(ModelResource, GroupResourceHelpersMixin):
         return map(serialize_candidate, instance.candidates.all())
 
     def format_feedback(self, staticfeedback):
-        return {'id': staticfeedback.id,
-                'rendered_view': staticfeedback.rendered_view,
-                'save_timestamp': format_datetime(staticfeedback.save_timestamp),
-                'grade': staticfeedback.grade,
-                # NOTE: points is not included because students are not supposed to get direct access to points.
-                'is_passing_grade': staticfeedback.is_passing_grade}
+        return serialize_feedback_without_points(staticfeedback)
 
     def format_delivery(self, delivery):
         return serialize_delivery(delivery)
