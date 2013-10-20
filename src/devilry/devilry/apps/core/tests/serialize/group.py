@@ -3,6 +3,7 @@ from django.test import TestCase
 
 from ...testhelper import TestHelper
 from ...serialize.group import serialize_deadlines
+from ...serialize.group import serialize_tags
 
 
 class TestSerializeGroup(TestCase):
@@ -25,4 +26,15 @@ class TestSerializeGroup(TestCase):
         self.assertEquals(serialize_deadlines(self.group), [{
             'id': self.deadline.id,
             'deadline': '2013-01-02 00:00:00'
+        }])
+
+    def test_serialize_tags(self):
+        a = self.group.tags.create(tag='a')
+        b = self.group.tags.create(tag='b')
+        self.assertEquals(serialize_tags(self.group), [{
+            'id': a.id,
+            'tag': 'a'
+        }, {
+            'id': b.id,
+            'tag': 'b'
         }])
