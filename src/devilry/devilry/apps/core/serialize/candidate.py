@@ -2,13 +2,13 @@ from django.contrib.auth.models import User
 
 from ..models import Candidate
 from .cache import serializedcache
-from .user import serialize_user
+from .user import serialize_related_user
 
 
 
 def _serialize_candidate(candidate):
     return {'id': candidate.id,
-            'user': serialize_user(candidate.student),
+            'user': serialize_related_user(candidate, 'student', candidate.student_id),
             'candidate_id': candidate.candidate_id,
             'identifier': candidate.identifier}
 

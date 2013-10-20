@@ -20,3 +20,6 @@ serializedcache.add(_serialize_user, {
 
 def serialize_user(user):
     return serializedcache.cache(_serialize_user, user)
+
+def serialize_related_user(obj, attribute, user_id):
+    return serializedcache.cache_related(_serialize_user, obj, attribute, user_id)

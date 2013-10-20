@@ -1,5 +1,5 @@
 from devilry.utils.restformat import format_datetime
-from .user import serialize_user
+from .user import serialize_related_user
 
 
 def serialize_feedback(feedback):
@@ -9,7 +9,7 @@ def serialize_feedback(feedback):
             'grade': feedback.grade,
             'is_passing_grade': feedback.is_passing_grade,
             'delivery_id': feedback.delivery.id,
-            'saved_by': serialize_user(feedback.saved_by),
+            'saved_by': serialize_related_user(feedback, 'saved_by', feedback.saved_by_id),
             'points': feedback.points}
 
 

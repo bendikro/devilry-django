@@ -2,7 +2,7 @@ from ..models import Deadline
 from ..models import AssignmentGroupTag
 from .cache import serializedcache
 from .deadline import serialize_deadline
-from .user import serialize_user
+from .user import serialize_related_user
 from .candidate import serialize_candidate
 from .candidate import serialize_candidate_anonymous
 
@@ -31,7 +31,7 @@ serializedcache.add(_serialize_tags, {
 def serialize_examiner(examiner):
     return {
             'id': examiner.id,
-            'user': serialize_user(examiner.user)
+            'user': serialize_related_user(examiner, 'user', examiner.user_id)
     }
 
 def _serialize_examiners(group):
