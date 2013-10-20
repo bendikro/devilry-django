@@ -9,25 +9,16 @@ from ..models import StaticFeedback
 from .cache import serializedcache
 from .filemeta import serialize_filemeta
 from .candidate import serialize_candidate
-from .candidate import serialize_candidate_anonymous
 from .feedback import serialize_feedback
 from .feedback import serialize_feedback_without_points
 
 
 
-def _serialize_delivery(delivery, without_points=False, anonymous=False):
-    serialize_candidate_function = serialize_candidate
-    if anonymous:
-        serialize_candidate_function = serialize_candidate_anonymous
-
-    serialize_feedback_function = serialize_feedback
-    if without_points:
-        serialize_feedback_function = serialize_feedback_without_points
-
+def _serialize_delivery(delivery):
     timedelta_before_deadline = delivery.deadline.deadline - delivery.time_of_delivery
     delivered_by = None
     if delivery.delivered_by:
-        delivered_by = serialize_candidate_function(delivery.delivered_by)
+        delivered_by = serialize_candidate(delivery.delivered_by)
     return {'id': delivery.id,
             'number': delivery.number,
             'delivered_by': delivered_by,
@@ -35,20 +26,17 @@ def _serialize_delivery(delivery, without_points=False, anonymous=False):
             'time_of_delivery': format_datetime(delivery.time_of_delivery),
             'offset_from_deadline': format_timedelta(timedelta_before_deadline),
             'alias_delivery': delivery.alias_delivery_id,
-            'feedbacks': map(serialize_feedback_function, delivery.feedbacks.all()),
+            'feedbacks': map(serialize_feedback, delivery.feedbacks.all()),
             'download_all_url': {'zip': reverse('devilry-delivery-download-all-zip',
                 kwargs={'deliveryid': delivery.id})},
             'filemetas': map(serialize_filemeta, delivery.filemetas.all())}
 
 
-def _serialize_delivery_without_points(delivery):
-    return _serialize_delivery(delivery, without_points=True)
-
 def _serialize_delivery_anonymous(delivery):
     return _serialize_delivery(delivery, anonymous=True)
 
 
-for serializer in (_serialize_delivery, _serialize_delivery_without_points, _serialize_delivery_anonymous):
+for serializer in (_serialize_delivery, _serialize_delivery_anonymous):
     serializedcache.add(serializer, {
         Delivery: None,
         FileMeta: lambda f: [f.delivery],
@@ -57,44 +45,34 @@ for serializer in (_serialize_delivery, _serialize_delivery_without_points, _ser
 
 
 
-def serialize_delivery(delivery):
-    return serializedcache.cache(_serialize_delivery, delivery)
+def serialize_delivery(delivery, anonymous=False, without_points=False):
+    serialized = serializedcache.cache(_serialize_delivery, delivery)
+    if without_points or anonymous:
+        for feedback in serialized['feedbacks']:
+            if without_points:
+                del feedback['points']
+            if anonymous:
+                del feedback['saved_by']
+    if anonymous:
+        if serialized['delivered_by']:
+            del serialized['delivered_by']['user']
+    return serialized
+
 
 def serialize_delivery_without_points(delivery):
     """
-    Serialize without points. I.E.: For students.
+    Serialize without points. I.E.: For students on non-anonymous assignments.
     """
-    serialized = serializedcache.cache(_serialize_delivery_without_points, delivery)
-    return serialized
+    return serialize_delivery(delivery, without_points=True)
 
 def serialize_delivery_anonymous(delivery):
     """
     Serialize with anonymousity maintained. I.E.: For examiners on anonymous assignments.
     """
-    serialized = serializedcache.cache(_serialize_delivery_anonymous, delivery)
-    return serialized
+    return serialize_delivery(delivery, anonymous=True)
 
-
-
-def _serialize_feedbacks(delivery):
-    return map(serialize_feedback, delivery.feedbacks.all())
-
-serializedcache.add(_serialize_feedbacks, {
-    StaticFeedback: lambda f: [f.delivery],
-})
-
-def serialize_feedbacks(delivery):
-    return serializedcache.cache(_serialize_feedbacks, delivery)
-
-
-
-
-def _serialize_feedbacks_without_points(delivery):
-    return map(serialize_feedback_without_points, delivery.feedbacks.all())
-
-serializedcache.add(_serialize_feedbacks_without_points, {
-    StaticFeedback: lambda f: [f.delivery],
-})
-
-def serialize_feedbacks_without_points(delivery):
-    return serializedcache.cache(_serialize_feedbacks_without_points, delivery)
+def serialize_delivery_without_points_anonymous(delivery):
+    """
+    Serialize with anonymousity maintained. I.E.: For students on anonymous assignments.
+    """
+    return serialize_delivery(delivery, anonymous=True, without_points=True)

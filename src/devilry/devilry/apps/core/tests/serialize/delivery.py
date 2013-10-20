@@ -6,12 +6,11 @@ from ...serialize.candidate import serialize_candidate
 from ...serialize.candidate import serialize_candidate_anonymous
 from ...serialize.feedback import serialize_feedback
 from ...serialize.feedback import serialize_feedback_without_points
+from ...serialize.feedback import serialize_feedback_anonymous
 from ...serialize.filemeta import serialize_filemeta
 from ...serialize.delivery import serialize_delivery
 from ...serialize.delivery import serialize_delivery_anonymous
 from ...serialize.delivery import serialize_delivery_without_points
-from ...serialize.delivery import serialize_feedbacks
-from ...serialize.delivery import serialize_feedbacks_without_points
 
 class TestSerializeDelivery(TestCase):
 
@@ -83,13 +82,6 @@ class TestSerializeDelivery(TestCase):
             },
             'offset_from_deadline': {'days': 1, 'hours': 0, 'minutes': 0, 'seconds': 0},
             'delivered_by': serialize_candidate_anonymous(self.candidate),
-            'feedbacks': [serialize_feedback(self.feedback)],
+            'feedbacks': [serialize_feedback_anonymous(self.feedback)],
             'filemetas': [serialize_filemeta(self.filemeta)],
         })
-
-    def test_serialize_feedbacks(self):
-        self.assertEquals(serialize_feedbacks(self.delivery), [serialize_feedback(self.feedback)])
-
-    def test_serialize_feedbacks_without_points(self):
-        self.assertEquals(serialize_feedbacks_without_points(self.delivery),
-                [serialize_feedback_without_points(self.feedback)])
