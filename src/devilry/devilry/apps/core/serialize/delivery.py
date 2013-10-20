@@ -1,16 +1,16 @@
 from django.core.urlresolvers import reverse
+from django.contrib.auth.models import User
 
 from devilry.utils.restformat import format_datetime
 from devilry.utils.restformat import format_timedelta
 from ..models import Delivery
 from ..models import Candidate
 from ..models import FileMeta
-from ..models import StaticFeedback
+from ..models.devilryuserprofile import DevilryUserProfile
 from .cache import serializedcache
 from .filemeta import serialize_filemeta
 from .candidate import serialize_candidate
 from .feedback import serialize_feedback
-from .feedback import serialize_feedback_without_points
 
 
 
@@ -41,6 +41,8 @@ for serializer in (_serialize_delivery, _serialize_delivery_anonymous):
         Delivery: None,
         FileMeta: lambda f: [f.delivery],
         Candidate: lambda c: [c.assignment_group.deliveries.all()],
+        User: lambda u: [Delivery.objects.filter(deadline__assignment_group__candidates__student=u)],
+        DevilryUserProfile: lambda p: [Delivery.objects.filter(deadline__assignment_group__candidates__student=p.user)]
     })
 
 
