@@ -1,9 +1,6 @@
 from django.core.urlresolvers import reverse
 from math import log
 
-from .cache import serializedcache
-from ..models import StaticFeedback
-
 
 
 filesize_unit_list = zip(['bytes', 'kB', 'MB', 'GB', 'TB', 'PB'], [0, 0, 1, 2, 2, 2])
@@ -24,18 +21,10 @@ def pretty_filesize(num):
         return '1 byte'
 
 
-def _serialize_filemeta(filemeta):
+def serialize_filemeta(filemeta):
     return {'id': filemeta.id,
             'filename': filemeta.filename,
             'size': filemeta.size,
             'download_url': reverse('devilry-delivery-file-download',
                                     kwargs={'filemetaid': filemeta.id}),
             'pretty_size': pretty_filesize(filemeta.size)}
-
-serializedcache.add(_serialize_filemeta, {
-    StaticFeedback: None
-})
-
-
-def serialize_filemeta(filemeta):
-    return serializedcache.cache(_serialize_filemeta, filemeta)
