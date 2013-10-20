@@ -18,3 +18,4 @@ from .serialize.feedback import TestSerializeFeedback
 from .serialize.candidate import TestSerializeCandidate
 from .serialize.filemeta import TestSerializeFileMeta
 from .serialize.delivery import TestSerializeDelivery
+from .serialize.group import TestSerializeGroup
