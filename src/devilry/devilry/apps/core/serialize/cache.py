@@ -8,8 +8,9 @@ class SerializeCacheRegistryItem(object):
         self.serializer = serializer
         self.modelclasses = modelclasses
 
-    def _get_cachekey(self, obj):
-        return SerializeCacheRegistry.get_cachekey_from_serializemethod(self.serializer, obj)
+    def _get_cachekey(self, pk):
+        key = '{}.{}.{}'.format(self.serializer.__module__, self.serializer.__name__, pk)
+        return key
 
     def _get_objects(self, sender, instance):
         objectfinder = self.modelclasses[sender]
@@ -20,7 +21,7 @@ class SerializeCacheRegistryItem(object):
 
     def _remove_from_cache(self, sender, instance):
         for obj in self._get_objects(sender, instance):
-            cachekey = self._get_cachekey(obj)
+            cachekey = self._get_cachekey(obj.pk)
             cache.delete(cachekey)
 
     def _on_postsave(self, sender, instance, **kwargs):
@@ -35,17 +36,40 @@ class SerializeCacheRegistryItem(object):
             pre_delete.connect(self._on_predelete, sender=modelclass)
 
     def cache(self, obj):
-        cachekey = self._get_cachekey(obj)
-        serialized = self.serializer(obj)
-        cache.set(cachekey, serialized)
+        cachekey = self._get_cachekey(obj.pk)
+        cached = cache.get(cachekey)
+        if cached:
+            return cached
+        else:
+            serialized = self.serializer(obj)
+            cache.set(cachekey, serialized)
+            return serialized
+
+    def cache_related(self, obj, attribute, pk):
+        """
+        Cache the attribute named ``attribute`` of the model object ``obj``.
+        This method avoids having to lookup the foreignkey if it is in the cache.
+
+        Example::
+
+            cache_related(user, 'devilryuserprofile', 10)
+
+        This will cache the ``devilryuserprofile``-attribute of the user
+        object, but it will not fetch the DevilryUserProfile object from the
+        database if the object is in the cache.
+        """
+        cachekey = self._get_cachekey(pk)
+        cached = cache.get(cachekey)
+        if cached:
+            return cached
+        else:
+            serialized = self.serializer(getattr(obj, attribute))
+            cache.set(cachekey, serialized)
+            return serialized
         return serialized
 
 
 class SerializeCacheRegistry(object):
-    @classmethod
-    def get_cachekey_from_serializemethod(cls, serializer, obj):
-        return '{}.{}.{}'.format(serializer.__module__, serializer.__name__, obj.pk)
-
     def __init__(self):
         self._registry = {}
 
@@ -60,6 +84,11 @@ class SerializeCacheRegistry(object):
         key = self._get_key(serializer)
         registryitem = self._registry[key]
         return registryitem.cache(obj)
+
+    def cache_related(self, serializer, obj, attribute, pk):
+        key = self._get_key(serializer)
+        registryitem = self._registry[key]
+        return registryitem.cache_related(obj, attribute, pk)
 
     def __iter__(self):
         return self._registry.itervalues()
