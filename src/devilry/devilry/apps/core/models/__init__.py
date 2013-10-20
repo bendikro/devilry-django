@@ -21,3 +21,6 @@ __all__ = ("AbstractIsAdmin", "AbstractIsExaminer", "AbstractIsCandidate",
            "RelatedStudentKeyValue", "Assignment", "AssignmentGroup",
            "AssignmentGroupTag", "Delivery", "Deadline", "Candidate", "StaticFeedback",
            "FileMeta", "DevilryUserProfile", 'PeriodApplicationKeyValue', 'Examiner')
+
+from ..serialize.cache import serializedcache
+serializedcache.register_signalhandlers()

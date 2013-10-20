@@ -61,9 +61,12 @@ class SerializeCacheRegistry(object):
         registryitem = self._registry[key]
         return registryitem.cache(obj)
 
-
     def __iter__(self):
         return self._registry.itervalues()
+
+    def register_signalhandlers(self):
+        for item in self:
+            item.register_signalhandlers()
 
 
 serializedcache = SerializeCacheRegistry()
