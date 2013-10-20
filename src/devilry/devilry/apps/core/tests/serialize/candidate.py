@@ -1,8 +1,8 @@
 from django.test import TestCase
 
 from ...testhelper import TestHelper
-from ...serialize.candidate import serialize_cadidate
-from ...serialize.candidate import serialize_cadidate_anonymous
+from ...serialize.candidate import serialize_candidate
+from ...serialize.candidate import serialize_candidate_anonymous
 from ...serialize.user import serialize_user
 
 class TestSerializeCandidate(TestCase):
@@ -17,7 +17,7 @@ class TestSerializeCandidate(TestCase):
         self.candidate = self.testhelper.sub_p1_a1_g1.candidates.all()[0]
 
     def test_serialize(self):
-        serialized = serialize_cadidate(self.candidate)
+        serialized = serialize_candidate(self.candidate)
         self.assertEquals(serialized, {
             'candidate_id': None,
             'id': 1,
@@ -25,7 +25,7 @@ class TestSerializeCandidate(TestCase):
             'user': serialize_user(self.candidate.student)})
 
     def test_serialize_anonymous(self):
-        serialized = serialize_cadidate_anonymous(self.candidate)
+        serialized = serialize_candidate_anonymous(self.candidate)
         self.assertEquals(serialized, {
             'candidate_id': None,
             'id': 1,
