@@ -10,6 +10,8 @@ from ...serialize.filemeta import serialize_filemeta
 from ...serialize.delivery import serialize_delivery
 from ...serialize.delivery import serialize_delivery_anonymous
 from ...serialize.delivery import serialize_delivery_without_points
+from ...serialize.delivery import serialize_feedbacks
+from ...serialize.delivery import serialize_feedbacks_without_points
 
 class TestSerializeDelivery(TestCase):
 
@@ -84,3 +86,10 @@ class TestSerializeDelivery(TestCase):
             'feedbacks': [serialize_feedback(self.feedback)],
             'filemetas': [serialize_filemeta(self.filemeta)],
         })
+
+    def test_serialize_feedbacks(self):
+        self.assertEquals(serialize_feedbacks(self.delivery), [serialize_feedback(self.feedback)])
+
+    def test_serialize_feedbacks_without_points(self):
+        self.assertEquals(serialize_feedbacks_without_points(self.delivery),
+                [serialize_feedback_without_points(self.feedback)])

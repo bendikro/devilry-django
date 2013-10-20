@@ -5,6 +5,7 @@ from devilry.utils.restformat import format_timedelta
 from ..models import Delivery
 from ..models import Candidate
 from ..models import FileMeta
+from ..models import StaticFeedback
 from .cache import serializedcache
 from .filemeta import serialize_filemeta
 from .candidate import serialize_candidate
@@ -55,6 +56,7 @@ for serializer in (_serialize_delivery, _serialize_delivery_without_points, _ser
     })
 
 
+
 def serialize_delivery(delivery):
     return serializedcache.cache(_serialize_delivery, delivery)
 
@@ -71,3 +73,28 @@ def serialize_delivery_anonymous(delivery):
     """
     serialized = serializedcache.cache(_serialize_delivery_anonymous, delivery)
     return serialized
+
+
+
+def _serialize_feedbacks(delivery):
+    return map(serialize_feedback, delivery.feedbacks.all())
+
+serializedcache.add(_serialize_feedbacks, {
+    StaticFeedback: lambda f: [f.delivery],
+})
+
+def serialize_feedbacks(delivery):
+    return serializedcache.cache(_serialize_feedbacks, delivery)
+
+
+
+
+def _serialize_feedbacks_without_points(delivery):
+    return map(serialize_feedback_without_points, delivery.feedbacks.all())
+
+serializedcache.add(_serialize_feedbacks_without_points, {
+    StaticFeedback: lambda f: [f.delivery],
+})
+
+def serialize_feedbacks_without_points(delivery):
+    return serializedcache.cache(_serialize_feedbacks_without_points, delivery)
