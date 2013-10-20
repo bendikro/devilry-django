@@ -22,3 +22,9 @@ def serialize_feedback_anonymous(feedback):
     serialized = serialize_feedback(feedback)
     del serialized['saved_by']
     return serialized
+
+def serialize_feedback_without_points_anonymous(feedback):
+    serialized = serialize_feedback(feedback)
+    del serialized['points']
+    del serialized['saved_by']
+    return serialized
