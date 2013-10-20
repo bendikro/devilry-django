@@ -3,9 +3,13 @@ from django.test import TestCase
 
 from ...testhelper import TestHelper
 from ...serialize.user import serialize_user
+from ...serialize.candidate import serialize_candidate
+from ...serialize.candidate import serialize_candidate_anonymous
 from ...serialize.group import serialize_deadlines
 from ...serialize.group import serialize_tags
 from ...serialize.group import serialize_examiners
+from ...serialize.group import serialize_candidates
+from ...serialize.group import serialize_candidates_anonymous
 
 
 class TestSerializeGroup(TestCase):
@@ -16,10 +20,11 @@ class TestSerializeGroup(TestCase):
                  subjects=["sub"],
                  periods=["p1:admin(teacher1):begins(-1):ends(5)"],
                  assignments=["a1"],
-                 assignmentgroups=["g1:candidate(student1):examiner(examiner1)"],
+                 assignmentgroups=["g1:candidate(candidate1):examiner(examiner1)"],
                  deadlines=['d1'])
 
         self.group = self.testhelper.sub_p1_a1_g1
+        self.candidate1 = self.group.candidates.all()[0]
         self.deadline = self.testhelper.sub_p1_a1_g1_d1
         self.deadline.deadline = datetime(2013, 1, 2)
         self.deadline.save()
@@ -47,3 +52,10 @@ class TestSerializeGroup(TestCase):
             'id': examiner1.id,
             'user': serialize_user(examiner1.user)
         }])
+
+    def test_serialize_candidates(self):
+        self.assertEquals(serialize_candidates(self.group), [serialize_candidate(self.candidate1)])
+
+    def test_serialize_candidates_anonymous(self):
+        self.assertEquals(serialize_candidates_anonymous(self.group),
+                [serialize_candidate_anonymous(self.candidate1)])
