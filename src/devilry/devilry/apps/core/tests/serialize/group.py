@@ -2,8 +2,10 @@ from datetime import datetime
 from django.test import TestCase
 
 from ...testhelper import TestHelper
+from ...serialize.user import serialize_user
 from ...serialize.group import serialize_deadlines
 from ...serialize.group import serialize_tags
+from ...serialize.group import serialize_examiners
 
 
 class TestSerializeGroup(TestCase):
@@ -37,4 +39,11 @@ class TestSerializeGroup(TestCase):
         }, {
             'id': b.id,
             'tag': 'b'
+        }])
+
+    def test_serialize_examiners(self):
+        examiner1 = self.group.examiners.all()[0]
+        self.assertEquals(serialize_examiners(self.group), [{
+            'id': examiner1.id,
+            'user': serialize_user(examiner1.user)
         }])
