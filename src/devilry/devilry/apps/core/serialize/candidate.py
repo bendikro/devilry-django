@@ -17,3 +17,8 @@ serializedcache.add(_serialize_cadidate, {
 
 def serialize_cadidate(candidate):
     return serializedcache.cache(_serialize_cadidate, candidate)
+
+def serialize_cadidate_anonymous(candidate):
+    serialized = serializedcache.cache(_serialize_cadidate, candidate)
+    del serialized['user']
+    return serialized

@@ -2,6 +2,7 @@ from django.test import TestCase
 
 from ...testhelper import TestHelper
 from ...serialize.candidate import serialize_cadidate
+from ...serialize.candidate import serialize_cadidate_anonymous
 from ...serialize.user import serialize_user
 
 class TestSerializeCandidate(TestCase):
@@ -22,3 +23,10 @@ class TestSerializeCandidate(TestCase):
             'id': 1,
             'identifier': u'student1',
             'user': serialize_user(self.candidate.student)})
+
+    def test_serialize_anonymous(self):
+        serialized = serialize_cadidate_anonymous(self.candidate)
+        self.assertEquals(serialized, {
+            'candidate_id': None,
+            'id': 1,
+            'identifier': u'student1'})
