@@ -12,8 +12,10 @@ from .helpers import GroupResourceHelpersMixin
 from .helpers import IsPublishedAndCandidate
 
 from devilry.apps.core.serialize.candidate import serialize_candidate
-from devilry.apps.core.serialize.delivery import serialize_delivery
+from devilry.apps.core.serialize.delivery import serialize_delivery_without_points
+from devilry.apps.core.serialize.delivery import serialize_delivery_without_points_anonymous
 from devilry.apps.core.serialize.feedback import serialize_feedback_without_points
+from devilry.apps.core.serialize.feedback import serialize_feedback_without_points_anonymous
 
 
 
@@ -28,33 +30,40 @@ class GroupResource(ModelResource, GroupResourceHelpersMixin):
     def candidates(self, instance):
         return map(serialize_candidate, instance.candidates.all())
 
-    def format_feedback(self, staticfeedback):
-        return serialize_feedback_without_points(staticfeedback)
+    def format_feedback(self, staticfeedback, anonymous):
+        if anonymous:
+            return serialize_feedback_without_points_anonymous(staticfeedback)
+        else:
+            return serialize_feedback_without_points(staticfeedback)
 
-    def format_delivery(self, delivery):
-        return serialize_delivery(delivery)
+    def format_delivery(self, delivery, anonymous):
+        if anonymous:
+            serialized = serialize_delivery_without_points_anonymous(delivery)
+        else:
+            serialized = serialize_delivery_without_points(delivery)
+        return serialized
 
-    def format_deliveries(self, deadline):
-        return map(self.format_delivery, deadline.deliveries.filter(successful=True))
+    def format_deliveries(self, deadline, anonymous):
+        return map(lambda d: self.format_delivery(d, anonymous), deadline.deliveries.filter(successful=True))
 
-    def format_deadline(self, deadline):
+    def format_deadline(self, deadline, anonymous):
         now = datetime.now()
         return {'id': deadline.id,
                 'deadline': format_datetime(deadline.deadline),
                 'in_the_future': deadline.deadline > now,
                 'offset_from_now': format_timedelta(now - deadline.deadline),
                 'text': deadline.text,
-                'deliveries': self.format_deliveries(deadline)}
+                'deliveries': self.format_deliveries(deadline, anonymous)}
 
     def deadlines(self, instance):
-        return map(self.format_deadline, instance.deadlines.all())
+        return map(lambda d: self.format_deadline(d, instance.parentnode.anonymous), instance.deadlines.all())
 
     def active_feedback(self, instance):
         """
         The active feedback is the feedback that was saved last.
         """
         if instance.feedback:
-            return {'feedback': self.format_feedback(instance.feedback),
+            return {'feedback': self.format_feedback(instance.feedback, anonymous=instance.parentnode.anonymous),
                     'deadline_id': instance.feedback.delivery.deadline_id,
                     'delivery_id': instance.feedback.delivery_id}
         else:
