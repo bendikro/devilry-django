@@ -8,7 +8,7 @@ def serialize_feedback(feedback):
             'save_timestamp': format_datetime(feedback.save_timestamp),
             'grade': feedback.grade,
             'is_passing_grade': feedback.is_passing_grade,
-            'delivery_id': feedback.delivery.id,
+            'delivery_id': feedback.delivery_id,
             'saved_by': serialize_related_user(feedback, 'saved_by', feedback.saved_by_id),
             'points': feedback.points}
 
