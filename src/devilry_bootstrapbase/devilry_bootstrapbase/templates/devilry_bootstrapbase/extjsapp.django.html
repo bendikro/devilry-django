@@ -20,8 +20,9 @@
 
 {% block app %}
     {% if EXTJS4_DEBUG %}
-        <script type="text/javascript" src="{{ appdir }}app.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}/{{ appname }}/app.js"></script>
     {% else %}
-        <script type="text/javascript" src="{{ appdir }}app-all.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}/{{ appname }}/app-all.js"></script>
     {% endif %}
 {% endblock %}
+<script type="text/javascript" src="{% static "devilry_extjsextras/extjsajax_django_csrf.js" %}"></script>
