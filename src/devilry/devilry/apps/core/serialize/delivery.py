@@ -40,7 +40,7 @@ for serializer in (_serialize_delivery, _serialize_delivery_anonymous):
     serializedcache.add(serializer, {
         Delivery: None,
         FileMeta: lambda f: [f.delivery],
-        Candidate: lambda c: [c.assignment_group.deliveries.all()],
+        Candidate: lambda c: [Delivery.objects.filter(deadline__assignment_group=c.assignment_group)],
         User: lambda u: [Delivery.objects.filter(deadline__assignment_group__candidates__student=u)],
         DevilryUserProfile: lambda p: [Delivery.objects.filter(deadline__assignment_group__candidates__student=p.user)]
     })
