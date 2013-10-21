@@ -6,6 +6,8 @@ css_dir = "../../static/devilry_examiner/stylesheets"
 sass_dir = "sass"
 images_dir = "images"
 javascripts_dir = "javascripts"
+add_import_path "../../../../devilry_bootstrapbase/devilry_bootstrapbase/static/devilry_bootstrapbase/components"
+add_import_path "../../../../devilry_bootstrapbase/devilry_bootstrapbase/sass/lib"
 
 
 # You can select your preferred output style here (can be overridden via the command line):
