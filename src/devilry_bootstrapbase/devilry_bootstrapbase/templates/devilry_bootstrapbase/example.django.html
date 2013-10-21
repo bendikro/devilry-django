@@ -1,1 +1,29 @@
-Hello world
+{% extends "devilry_bootstrapbase/base.django.html" %}
+{% load static %}
+
+{% block css %}
+<link href='{% static "devilry_bootstrapbase/stylesheets/example.css" %}' rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block body %}
+    <h1>Hello, world!</h1>
+
+    {#{% compress js %}#}
+    <script src='{% static "devilry_bootstrapbase/components/jquery/jquery.js" %}'></script>
+
+    {# bootstrap JS #}
+    {#<script src='{% static "devilry_bootstrapbase/components/sass-bootstrap-compass/js/affix.js" %}'></script>#}
+    {#<script src='{% static "devilry_bootstrapbase/components/sass-bootstrap-compass/js/alert.js" %}'></script>#}
+    {#<script src='{% static "devilry_bootstrapbase/components/sass-bootstrap-compass/js/button.js" %}'></script>#}
+    {#<script src='{% static "devilry_bootstrapbase/components/sass-bootstrap-compass/js/carousel.js" %}'></script>#}
+    {#<script src='{% static "devilry_bootstrapbase/components/sass-bootstrap-compass/js/collapse.js" %}'></script>#}
+    {#<script src='{% static "devilry_bootstrapbase/components/sass-bootstrap-compass/js/dropdown.js" %}'></script>#}
+    {#<script src='{% static "devilry_bootstrapbase/components/sass-bootstrap-compass/js/modal.js" %}'></script>#}
+    {#<script src='{% static "devilry_bootstrapbase/components/sass-bootstrap-compass/js/tooltip.js" %}'></script>#}
+    {#<script src='{% static "devilry_bootstrapbase/components/sass-bootstrap-compass/js/popover.js" %}'></script>#}
+    {#<script src='{% static "devilry_bootstrapbase/components/sass-bootstrap-compass/js/scrollspy.js" %}'></script>#}
+    {#<script src='{% static "devilry_bootstrapbase/components/sass-bootstrap-compass/js/tab.js" %}'></script>#}
+    {#<script src='{% static "devilry_bootstrapbase/components/sass-bootstrap-compass/js/transition.js" %}'></script>#}
+    {#{% endcompress %}#}
+
+{% endblock %}
