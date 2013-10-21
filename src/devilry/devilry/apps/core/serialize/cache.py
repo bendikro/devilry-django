@@ -15,12 +15,16 @@ class SerializeCacheRegistryItem(object):
     def _get_objects(self, sender, instance):
         objectfinder = self.modelclasses[sender]
         if not objectfinder:
-            objectfinder = lambda o: o.pk
-        obj = objectfinder(instance)
-        return obj
+            objectfinder = lambda o: [o.pk]
+        return objectfinder(instance)
 
     def _remove_from_cache(self, sender, instance):
         for obj in self._get_objects(sender, instance):
+            if not isinstance(obj, instance.__class__):
+                raise ValueError('The cache eviction lookup method for {}.{} registered for {}.{} does not return an iterable over {}.{}-objects.'.format(
+                    self.serializer.__module__, self.serializer.__name__,
+                    sender.__module__, sender.__name__,
+                    obj.__class__.__module__, obj.__class__.__name__))
             cachekey = self._get_cachekey(obj.pk)
             cache.delete(cachekey)
 
@@ -70,6 +74,16 @@ class SerializeCacheRegistryItem(object):
 
 
 class SerializeCacheRegistry(object):
+    """
+    This cache registry is an API to setup post_save and pre_delete handlers
+    for the serializers in this module. We use it through the
+    :obj:`.serializedcache`-instance.
+
+    A serializer registeres itself as follows::
+
+        $ from .cache import serializedcache
+        $ serializedcache
+    """
     def __init__(self):
         self._registry = {}
 
