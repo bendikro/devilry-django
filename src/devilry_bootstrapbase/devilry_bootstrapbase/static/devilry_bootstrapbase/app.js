@@ -27,8 +27,11 @@ Ext.application({
      ********************************************/
 
     _setupRoutes: function() {
-        this.route = Ext.create('devilry_extjsextras.Router', this);
-        this.route.add("", 'dashboard');
+        this.route = Ext.create('devilry_extjsextras.Router', this, {
+            includePhysicalPath: true
+        });
+        this.route.add("/example", 'dashboard');
+        this.route.add("/example#testroute", 'testroute');
         this.route.start();
     },
     
@@ -38,5 +41,8 @@ Ext.application({
 
     dashboard: function() {
         console.log('dashboard route triggered');
+    },
+    testroute: function() {
+        console.log('testroute triggered');
     }
 });
