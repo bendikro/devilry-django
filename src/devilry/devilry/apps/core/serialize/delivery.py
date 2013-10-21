@@ -47,13 +47,12 @@ def _serialize_delivery(delivery):
             'filemetas': map(serialize_filemeta, delivery.filemetas.all())}
 
 
-
 serializedcache.add(_serialize_delivery, {
     Delivery: None,
     FileMeta: lambda f: [f.delivery],
-    Candidate: lambda c: [Delivery.objects.filter(deadline__assignment_group=c.assignment_group)],
-    User: lambda u: [Delivery.objects.filter(deadline__assignment_group__candidates__student=u)],
-    DevilryUserProfile: lambda p: [Delivery.objects.filter(deadline__assignment_group__candidates__student=p.user)]
+    Candidate: lambda c: Delivery.objects.filter(deadline__assignment_group=c.assignment_group),
+    User: lambda u: Delivery.objects.filter(deadline__assignment_group__candidates__student=u),
+    DevilryUserProfile: lambda p: Delivery.objects.filter(deadline__assignment_group__candidates__student=p.user)
 })
 
 
