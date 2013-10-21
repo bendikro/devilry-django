@@ -1,19 +1,25 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>{% block title %}Devilry{% endblock %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <head>
+        <title>{% block title %}Devilry{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    {% block css %}{% endblock %}
+        {% block css %}{% endblock %}
 
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
         <script src='{% static "components/sass-bootstrap-compass/assets/js/html5shiv.js" %}'></script>
         <script src='{% static "components/sass-bootstrap-compass/assets/js/respond.min.js" %}'></script>
-    <![endif]-->
-  </head>
-  <body>
-      {% block body %}{% endblock %}
-  </body>
+        <![endif]-->
+
+        {% block favicons %}
+            <link rel="apple-touch-icon" href="{% static "devilry_bootstrapbase/images/favicons/apple-touch-icon.png" %}" />
+            <link rel="shortcut icon" href="{% static "devilry_bootstrapbase/images/favicons/favicon.ico" %}" />
+        {% endblock %}
+
+    </head>
+    <body>
+        {% block body %}{% endblock %}
+    </body>
 </html>

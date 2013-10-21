@@ -2,9 +2,12 @@
 {% load static %}
 {% load compress %}
 
+{% block title %}Devilry bootstrap example{% endblock %}
+
 {% block css %}
-<link href='{% static "devilry_bootstrapbase/stylesheets/example.css" %}' rel="stylesheet" media="screen">
+    <link href='{% static "devilry_bootstrapbase/stylesheets/example.css" %}' rel="stylesheet" media="screen">
 {% endblock %}
+
 
 {% block body %}
     <h1>Hello, world!</h1>
