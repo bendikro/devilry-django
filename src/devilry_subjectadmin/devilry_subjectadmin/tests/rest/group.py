@@ -77,7 +77,7 @@ class TestListGroupRest(TestCase):
         feedback = content[0]['feedback']
         self.assertEquals(set(feedback.keys()),
                           set(['id', 'grade', 'is_passing_grade', 'points', 'save_timestamp',
-                               'delivery_id']))
+                               'delivery_id', 'saved_by']))
         self.assertEquals(feedback['grade'], 'A')
         self.assertEquals(feedback['is_passing_grade'], True)
         self.assertEquals(feedback['points'], 100)
@@ -412,7 +412,7 @@ class TestGroupRest(TestCase, GroupManagerTestMixin):
 
         # Deadlines
         self.assertEquals(len(first['deadlines']), 1)
-        self.assertEquals(first['deadlines'][0]['deadline'], '2005-01-01T00:00:00')
+        self.assertEquals(first['deadlines'][0]['deadline'], '2005-01-01 00:00:00')
         self.assertEquals(set(first['deadlines'][0].keys()), set(['id', 'deadline']))
 
         # Tags
@@ -435,7 +435,7 @@ class TestGroupRest(TestCase, GroupManagerTestMixin):
         self.assertEquals(len(first['candidates']), 1)
         candidate = first['candidates'][0]
         self.assertEquals(set(candidate.keys()),
-                          set(['id', 'user', 'candidate_id']))
+                          set(['id', 'user', 'candidate_id', 'identifier']))
         self.assertEquals(set(candidate['user'].keys()),
                           set(['email', 'full_name', 'id', 'username', 'displayname']))
         self.assertEquals(candidate['user']['id'], self.testhelper.candidate1.id)
