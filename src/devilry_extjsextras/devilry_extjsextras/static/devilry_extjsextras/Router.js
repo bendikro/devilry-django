@@ -10,6 +10,16 @@ Ext.define('devilry_extjsextras.Router', {
     splatParam: /\*\w+/g,
     escapeRegExp: /[-[\]{}()+?.,\\^$|#\s]/g,
 
+    /**
+     * @cfg {boolean} [includePhysicalPath=false]
+     * Include the physical path in the token matched by the route?
+     * Setting this to ``true``, makes the token that we match against include
+     * ``window.location.pathname`` with the first segment removed (I.E.: If
+     * the path is ``/devilry_examiner/myview#test``, we match against
+     * ``/myview#test``.
+     */
+    includePhysicalPath: false,
+
     constructor: function(handler, config) {
         this.handler = handler;
         this.routes = [];
@@ -38,9 +48,9 @@ Ext.define('devilry_extjsextras.Router', {
 
     add: function(pattern, action) {
         var regex;
-        if(Ext.typeOf(pattern) == 'regexp') {
+        if(Ext.typeOf(pattern) === 'regexp') {
             regex = pattern;
-        } else if(Ext.typeOf(pattern) == 'string') {
+        } else if(Ext.typeOf(pattern) === 'string') {
             regex = this._patternToRegExp(pattern);
         } else {
             throw 'pattern must be regex.';
@@ -59,12 +69,28 @@ Ext.define('devilry_extjsextras.Router', {
         this._initHistory();
     },
 
+    _getToken: function(token) {
+        if(this.includePhysicalPath) {
+            var path = window.location.pathname.split('/');
+            path.shift();
+            path.shift();
+            var tokenWithPhysicalPath = '/' + path.join('/');
+            if(!Ext.isEmpty(token)) {
+                tokenWithPhysicalPath += '#' + token;
+            }
+            return tokenWithPhysicalPath;
+        } else {
+            return token;
+        }
+    },
+
     _trigger: function(token) {
+        token = this._getToken(token);
         if(this.eventsSuspended) {
             this.eventsSuspended = false;
             return;
         }
-        if(token == null) {
+        if(token === null) {
             token = '';
         }
         var routeInfo = {
@@ -84,7 +110,7 @@ Ext.define('devilry_extjsextras.Router', {
                 return;
             }
         }
-        Ext.bind(this.handler['routeNotFound'], this.handler)(Ext.apply(routeInfo, {
+        Ext.bind(this.handler.routeNotFound, this.handler)(Ext.apply(routeInfo, {
             action: 'routeNotFound'
         }));
     },
@@ -96,7 +122,7 @@ Ext.define('devilry_extjsextras.Router', {
     _onHistoryReady: function(history) {
         this.resume();
         var token = history.getToken();
-        if(token == null) {
+        if(token === null) {
             token = '';
         }
         this._trigger(token);
