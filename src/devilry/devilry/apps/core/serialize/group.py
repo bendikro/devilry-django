@@ -1,5 +1,7 @@
 from ..models import Deadline
 from ..models import AssignmentGroupTag
+from ..models import Examiner
+from ..models import Candidate
 from .cache import serializedcache
 from .deadline import serialize_deadline
 from .user import serialize_related_user
@@ -38,7 +40,7 @@ def _serialize_examiners(group):
     return map(serialize_examiner, group.examiners.all())
 
 serializedcache.add(_serialize_examiners, {
-    AssignmentGroupTag: lambda examiner: [examiner.assignment_group],
+    Examiner: lambda examiner: [examiner.assignment_group],
 })
 
 
@@ -47,14 +49,14 @@ def _serialize_candidates(group):
     return map(serialize_candidate, group.candidates.all())
 
 serializedcache.add(_serialize_candidates, {
-    AssignmentGroupTag: lambda candidate: [candidate.assignment_group],
+    Candidate: lambda candidate: [candidate.assignment_group],
 })
 
 def _serialize_candidates_anonymous(group):
     return map(serialize_candidate_anonymous, group.candidates.all())
 
 serializedcache.add(_serialize_candidates_anonymous, {
-    AssignmentGroupTag: lambda candidate: [candidate.assignment_group],
+    Candidate: lambda candidate: [candidate.assignment_group],
 })
 
 
