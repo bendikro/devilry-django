@@ -35,6 +35,7 @@ INSTALLED_APPS += [
     'devilry_sandbox',
 
     'devilry_examiner',
+    'devilry_bootstrapbase',
     'devilry_rest',
     'simple_rest',
 

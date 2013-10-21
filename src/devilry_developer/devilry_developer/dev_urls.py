@@ -10,6 +10,7 @@ urlpatterns = patterns('',
 #    url(r'^rosetta/', include('rosetta.urls')),
     url(r'^devilry_sandbox/', include('devilry_sandbox.urls')),
     url(r'^devilry_examiner/', include('devilry_examiner.urls')),
+    url(r'^devilry_bootstrapbase/', include('devilry_bootstrapbase.urls')),
 
     # Add the default Devilry urls
     *devilry_urls
