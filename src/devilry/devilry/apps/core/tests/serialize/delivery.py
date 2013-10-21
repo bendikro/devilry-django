@@ -5,12 +5,9 @@ from ...testhelper import TestHelper
 from ...serialize.candidate import serialize_candidate
 from ...serialize.candidate import serialize_candidate_anonymous
 from ...serialize.feedback import serialize_feedback
-from ...serialize.feedback import serialize_feedback_without_points
-from ...serialize.feedback import serialize_feedback_anonymous
 from ...serialize.filemeta import serialize_filemeta
 from ...serialize.delivery import serialize_delivery
-from ...serialize.delivery import serialize_delivery_anonymous
-from ...serialize.delivery import serialize_delivery_without_points
+
 
 class TestSerializeDelivery(TestCase):
 
@@ -55,7 +52,7 @@ class TestSerializeDelivery(TestCase):
         })
 
     def test_serialize_without_points(self):
-        self.assertEquals(serialize_delivery_without_points(self.delivery), {
+        self.assertEquals(serialize_delivery(self.delivery, without_points=True), {
             'id': 1,
             'after_deadline': False,
             'alias_delivery': None,
@@ -66,12 +63,12 @@ class TestSerializeDelivery(TestCase):
             },
             'offset_from_deadline': {'days': 1, 'hours': 0, 'minutes': 0, 'seconds': 0},
             'delivered_by': serialize_candidate(self.candidate),
-            'feedbacks': [serialize_feedback_without_points(self.feedback)],
+            'feedbacks': [serialize_feedback(self.feedback, without_points=True)],
             'filemetas': [serialize_filemeta(self.filemeta)],
         })
 
     def test_serialize_anonymous(self):
-        self.assertEquals(serialize_delivery_anonymous(self.delivery), {
+        self.assertEquals(serialize_delivery(self.delivery, anonymous=True), {
             'id': 1,
             'after_deadline': False,
             'alias_delivery': None,
@@ -82,6 +79,6 @@ class TestSerializeDelivery(TestCase):
             },
             'offset_from_deadline': {'days': 1, 'hours': 0, 'minutes': 0, 'seconds': 0},
             'delivered_by': serialize_candidate_anonymous(self.candidate),
-            'feedbacks': [serialize_feedback_anonymous(self.feedback)],
+            'feedbacks': [serialize_feedback(self.feedback, anonymous=True)],
             'filemetas': [serialize_filemeta(self.filemeta)],
         })

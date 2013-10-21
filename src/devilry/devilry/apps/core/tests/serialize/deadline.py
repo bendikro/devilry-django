@@ -3,9 +3,6 @@ from django.test import TestCase
 
 from ...testhelper import TestHelper
 from ...serialize.delivery import serialize_delivery
-from ...serialize.delivery import serialize_delivery_anonymous
-from ...serialize.delivery import serialize_delivery_without_points
-from ...serialize.delivery import serialize_delivery_without_points_anonymous
 from ...serialize.deadline import serialize_deadline
 from ...serialize.deadline import serialize_deliveries
 

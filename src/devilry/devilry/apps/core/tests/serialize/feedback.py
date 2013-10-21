@@ -4,9 +4,6 @@ from django.test import TestCase
 from ...testhelper import TestHelper
 from ...serialize.user import serialize_user
 from ...serialize.feedback import serialize_feedback
-from ...serialize.feedback import serialize_feedback_without_points
-from ...serialize.feedback import serialize_feedback_anonymous
-from ...serialize.feedback import serialize_feedback_without_points_anonymous
 
 class TestSerializeFeedback(TestCase):
 
@@ -37,7 +34,7 @@ class TestSerializeFeedback(TestCase):
             'save_timestamp': '2013-01-01 00:00:00'})
 
     def test_serialize_anonymous(self):
-        self.assertEquals(serialize_feedback_anonymous(self.feedback), {
+        self.assertEquals(serialize_feedback(self.feedback, anonymous=True), {
             'grade': 'C',
             'id': self.feedback.id,
             'is_passing_grade': True,
@@ -47,20 +44,11 @@ class TestSerializeFeedback(TestCase):
             'save_timestamp': '2013-01-01 00:00:00'})
 
     def test_serialize_without_points(self):
-        self.assertEquals(serialize_feedback_without_points(self.feedback), {
+        self.assertEquals(serialize_feedback(self.feedback, without_points=True), {
             'grade': 'C',
             'id': self.feedback.id,
             'is_passing_grade': True,
             'delivery_id': self.delivery.id,
             'rendered_view': 'This is a default static feedback',
             'saved_by': serialize_user(self.testhelper.examiner1),
-            'save_timestamp': '2013-01-01 00:00:00'})
-
-    def test_serialize_without_points_anonymous(self):
-        self.assertEquals(serialize_feedback_without_points_anonymous(self.feedback), {
-            'grade': 'C',
-            'id': self.feedback.id,
-            'is_passing_grade': True,
-            'delivery_id': self.delivery.id,
-            'rendered_view': 'This is a default static feedback',
             'save_timestamp': '2013-01-01 00:00:00'})

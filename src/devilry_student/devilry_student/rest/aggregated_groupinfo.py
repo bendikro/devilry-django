@@ -12,10 +12,8 @@ from .helpers import GroupResourceHelpersMixin
 from .helpers import IsPublishedAndCandidate
 
 from devilry.apps.core.serialize.candidate import serialize_candidate
-from devilry.apps.core.serialize.delivery import serialize_delivery_without_points
-from devilry.apps.core.serialize.delivery import serialize_delivery_without_points_anonymous
-from devilry.apps.core.serialize.feedback import serialize_feedback_without_points
-from devilry.apps.core.serialize.feedback import serialize_feedback_without_points_anonymous
+from devilry.apps.core.serialize.delivery import serialize_delivery
+from devilry.apps.core.serialize.feedback import serialize_feedback
 
 
 
@@ -31,17 +29,10 @@ class GroupResource(ModelResource, GroupResourceHelpersMixin):
         return map(serialize_candidate, instance.candidates.all())
 
     def format_feedback(self, staticfeedback, anonymous):
-        if anonymous:
-            return serialize_feedback_without_points_anonymous(staticfeedback)
-        else:
-            return serialize_feedback_without_points(staticfeedback)
+        return serialize_feedback(without_points=True, anonymous=anonymous)
 
     def format_delivery(self, delivery, anonymous):
-        if anonymous:
-            serialized = serialize_delivery_without_points_anonymous(delivery)
-        else:
-            serialized = serialize_delivery_without_points(delivery)
-        return serialized
+        return serialize_delivery(without_points=True, anonymous=anonymous)
 
     def format_deliveries(self, deadline, anonymous):
         return map(lambda d: self.format_delivery(d, anonymous), deadline.deliveries.filter(successful=True))
