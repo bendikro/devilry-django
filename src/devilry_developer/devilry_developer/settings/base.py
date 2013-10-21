@@ -181,6 +181,14 @@ CACHES = {
     }
 }
 
+##########################################
+#
+# Django compressor (compress css/js)
+#
+##########################################
+#COMPRESS_ENABLED = True # Set to True to test compressor
+
+
 ##############################################################
 #
 # Rosetta

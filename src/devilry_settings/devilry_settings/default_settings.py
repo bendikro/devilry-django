@@ -37,6 +37,7 @@ INSTALLED_APPS = ['django.contrib.markup',
                   'django.contrib.sessions',
                   'django.contrib.messages',
                   'django.contrib.admin',
+                  'compressor',
                   'djcelery',
                   'errortemplates',
                   'crispy_forms',
@@ -145,6 +146,24 @@ HAYSTACK_SOLR_URL = 'http://127.0.0.1:8983/solr'
 ########################################################################
 BROKER_URL = 'amqp://devilry:secret@localhost:5672/devilryhost'
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+
+
+
+########################################################################
+#
+# Django-compressor
+#
+########################################################################
+STATICFILES_FINDERS = (
+
+    # The default finders
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+
+    # For django-compressor
+    'compressor.finders.CompressorFinder',
+)
+
 
 
 ########################################################################
