@@ -5,6 +5,8 @@ from ...testhelper import TestHelper
 from ...serialize.user import serialize_user
 from ...serialize.candidate import serialize_candidate
 from ...serialize.candidate import serialize_candidate_anonymous
+from ...serialize.delivery import serialize_delivery
+from ...serialize.deadline import serialize_deliveries
 from ...serialize.group import serialize_deadlines
 from ...serialize.group import serialize_tags
 from ...serialize.group import serialize_examiners
@@ -29,10 +31,28 @@ class TestSerializeGroup(TestCase):
         self.deadline.deadline = datetime(2013, 1, 2)
         self.deadline.save()
 
+        self.delivery = self.testhelper.add_delivery("sub.p1.a1.g1", {"good.py": "print awesome"})
+        self.delivery.time_of_delivery = datetime(2013, 1, 1)
+        self.delivery.save(autoset_time_of_delivery=False, autoset_number=False)
+
     def test_serialize_deadlines(self):
         self.assertEquals(serialize_deadlines(self.group), [{
             'id': self.deadline.id,
             'deadline': '2013-01-02 00:00:00'
+        }])
+
+    def test_serialize_deadlines_with_deliveries(self):
+        self.assertEquals(serialize_deadlines(self.group, with_deliveries=True), [{
+            'id': self.deadline.id,
+            'deadline': '2013-01-02 00:00:00',
+            'deliveries': serialize_deliveries(self.deadline),
+        }])
+
+    def test_serialize_deadlines_with_deliveries_anonymous(self):
+        self.assertEquals(serialize_deadlines(self.group, with_deliveries=True, anonymous=True), [{
+            'id': self.deadline.id,
+            'deadline': '2013-01-02 00:00:00',
+            'deliveries': [serialize_delivery(self.delivery, anonymous=True)],
         }])
 
     def test_serialize_tags(self):

@@ -8,9 +8,6 @@ from ...serialize.delivery import serialize_delivery_without_points
 from ...serialize.delivery import serialize_delivery_without_points_anonymous
 from ...serialize.deadline import serialize_deadline
 from ...serialize.deadline import serialize_deliveries
-from ...serialize.deadline import serialize_deliveries_without_points
-from ...serialize.deadline import serialize_deliveries_anonymous
-from ...serialize.deadline import serialize_deliveries_without_points_anonymous
 
 
 class TestSerializeDeadline(TestCase):
@@ -45,18 +42,17 @@ class TestSerializeDeadline(TestCase):
             'deadline': '2013-01-02 00:00:00'
         })
 
+    def test_serialize_deadline_with_deliveries(self):
+        self.assertEquals(serialize_deadline(self.deadline, with_deliveries=True), {
+            'id': self.deadline.id,
+            'deadline': '2013-01-02 00:00:00',
+            'deliveries': serialize_deliveries(self.delivery)
+        })
+
     def test_serialize_deliveries(self):
         self.assertEquals(serialize_deliveries(self.deadline),
                 [serialize_delivery(self.delivery)])
 
-    def test_serialize_deliveries_without_points(self):
-        self.assertEquals(serialize_deliveries_without_points(self.deadline),
-                [serialize_delivery_without_points(self.delivery)])
-
     def test_serialize_deliveries_without_points_anonymous(self):
-        self.assertEquals(serialize_deliveries_without_points_anonymous(self.deadline),
-                [serialize_delivery_without_points_anonymous(self.delivery)])
-
-    def test_serialize_deliveries_anonymous(self):
-        self.assertEquals(serialize_deliveries_anonymous(self.deadline),
-                [serialize_delivery_anonymous(self.delivery)])
+        self.assertEquals(serialize_deliveries(self.deadline, anonymous=True, without_points=True),
+                [serialize_delivery(self.delivery, anonymous=True, without_points=True)])

@@ -7,10 +7,10 @@ from .candidate import serialize_candidate
 from .candidate import serialize_candidate_anonymous
 
 
-def _serialize_deadlines(group):
-    return map(serialize_deadline, group.deadlines.all())
+def _get_deadlines(group):
+    return group.deadlines.all()
 
-serializedcache.add(_serialize_deadlines, {
+serializedcache.add(_get_deadlines, {
     Deadline: lambda d: [d.assignment_group],
 })
 
@@ -58,9 +58,6 @@ serializedcache.add(_serialize_candidates_anonymous, {
 })
 
 
-def serialize_deadlines(group):
-    return serializedcache.cache(_serialize_deadlines, group)
-
 def serialize_tags(group):
     return serializedcache.cache(_serialize_tags, group)
 
@@ -75,3 +72,9 @@ def serialize_candidates_anonymous(group):
     Serialize candidates without any data that breaks the anonymity of the candidate.
     """
     return serializedcache.cache(_serialize_candidates_anonymous, group)
+
+
+def serialize_deadlines(group, **deadlineserializerkwargs):
+    return map(
+            lambda deadline: serialize_deadline(deadline, **deadlineserializerkwargs),
+            serializedcache.cache(_get_deadlines, group))
