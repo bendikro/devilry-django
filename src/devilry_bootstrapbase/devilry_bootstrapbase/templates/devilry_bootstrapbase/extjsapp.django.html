@@ -1,0 +1,27 @@
+{% load static %}
+
+{% block extjs %}
+    {% if EXTJS4_DEBUG %}
+        <script type="text/javascript" src="{% static EXTJS4_DEBUGFILE %}"></script>
+        <script type="text/javascript">
+            Ext.Loader.setConfig({
+                enabled: true
+            });
+        </script>
+    {% else %}
+        <script type="text/javascript" src="{% static EXTJS4_PRODFILE %}"></script>
+        <script type="text/javascript">
+            Ext.Loader.setConfig({
+                enabled: false
+            });
+        </script>
+    {% endif %}
+{% endblock %}
+
+{% block app %}
+    {% if EXTJS4_DEBUG %}
+        <script type="text/javascript" src="{{ appdir }}app.js"></script>
+    {% else %}
+        <script type="text/javascript" src="{{ appdir }}app-all.js"></script>
+    {% endif %}
+{% endblock %}
