@@ -29,10 +29,10 @@ class GroupResource(ModelResource, GroupResourceHelpersMixin):
         return map(serialize_candidate, instance.candidates.all())
 
     def format_feedback(self, staticfeedback, anonymous):
-        return serialize_feedback(without_points=True, anonymous=anonymous)
+        return serialize_feedback(staticfeedback, without_points=True, anonymous=anonymous)
 
     def format_delivery(self, delivery, anonymous):
-        return serialize_delivery(without_points=True, anonymous=anonymous)
+        return serialize_delivery(delivery, without_points=True, anonymous=anonymous)
 
     def format_deliveries(self, deadline, anonymous):
         return map(lambda d: self.format_delivery(d, anonymous), deadline.deliveries.filter(successful=True))
