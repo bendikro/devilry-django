@@ -7,6 +7,7 @@
       'devilry_extjsextras': DevilrySettings.DEVILRY_STATIC_URL + '/devilry_extjsextras'
     },
     requires: ['devilry_extjsextras.Router', 'devilry_extjsextras.RouteNotFound'],
+    controllers: ['DashboardController'],
     launch: function() {
       return this._setupRoutes();
     },
@@ -32,7 +33,8 @@
       return console.error('Route not found:', routeInfo.token);
     },
     dashboard: function() {
-      return console.log('TODO: dashboard route');
+      console.log('dashboard route');
+      return Ext.create('devilry_examiner.view.dashboard.YourAssignments');
     }
   });
 

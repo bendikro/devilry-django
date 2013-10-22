@@ -8,6 +8,8 @@ Ext.define('devilry_examiner.controller.DashboardController', {
 
     stores: []
 
+    models: ['YourAssignments']
+
     refs: [{
         ref: 'yourAssignments'
         selector: 'yourAssignments'
@@ -21,7 +23,7 @@ Ext.define('devilry_examiner.controller.DashboardController', {
         })
 
     _onRenderYourAssignments: ->
-        #console.log @getYourAssignments()
+        console.log @getYourAssignmentsModel()
         @getYourAssignments().update({
             assignments: [
                 {long_name: 'Oblig 1'}

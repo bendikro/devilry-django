@@ -2,27 +2,34 @@
 (function() {
   Ext.define('devilry_examiner.controller.DashboardController', {
     extend: 'Ext.app.Controller',
-    views: ['dashboard.Dashboard'],
+    views: ['dashboard.YourAssignments'],
     stores: [],
+    models: ['YourAssignments'],
+    refs: [
+      {
+        ref: 'yourAssignments',
+        selector: 'yourAssignments'
+      }
+    ],
     init: function() {
       return this.control({
-        'viewport dashboard': {
-          render: this._onRender
+        'yourAssignments': {
+          render: this._onRenderYourAssignments
         }
       });
     },
-    _onRender: function() {
-      return console.log('Render');
+    _onRenderYourAssignments: function() {
+      console.log(this.getYourAssignmentsModel());
+      return this.getYourAssignments().update({
+        assignments: [
+          {
+            long_name: 'Oblig 1'
+          }, {
+            long_name: 'Oblig 2'
+          }
+        ]
+      });
     }
-    /*
-    _onLoadSuccess: function(records) {
-        this.getAllWhereIsAdminList().update({
-            loadingtext: null,
-            list: this._flattenListOfActive(records)
-        })
-    }
-    */
-
   });
 
 }).call(this);
