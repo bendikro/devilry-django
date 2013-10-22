@@ -6,9 +6,7 @@ Ext.define('devilry_examiner.controller.DashboardController', {
         'dashboard.YourAssignments'
     ]
 
-    stores: []
-
-    models: ['YourAssignments']
+    stores: ['YourAssignments']
 
     refs: [{
         ref: 'yourAssignments'
@@ -23,11 +21,16 @@ Ext.define('devilry_examiner.controller.DashboardController', {
         })
 
     _onRenderYourAssignments: ->
-        console.log @getYourAssignmentsModel()
-        @getYourAssignments().update({
-            assignments: [
-                {long_name: 'Oblig 1'}
-                {long_name: 'Oblig 2'}
-            ]
+        @getYourAssignmentsStore().load({
+            scope: this
+            callback: (assignmentRecords, operation) ->
+                if operation.success
+                    for assignment in assignmentRecords
+                        console.log assignment.get('long_name')
+                    @getYourAssignments().update({
+                        assignments: assignmentRecords
+                    })
+                else
+                    console.error "ERROR", operation
         })
 })
