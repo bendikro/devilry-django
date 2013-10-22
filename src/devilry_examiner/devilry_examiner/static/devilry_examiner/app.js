@@ -4,78 +4,11 @@
     name: 'devilry_examiner',
     appFolder: DevilrySettings.DEVILRY_STATIC_URL + '/devilry_examiner/app',
     paths: {
-      'devilry_extjsextras': DevilrySettings.DEVILRY_STATIC_URL + '/devilry_extjsextras',
-      'devilry_i18n': DevilrySettings.DEVILRY_STATIC_URL + '/devilry_i18n',
-      'devilry_header': DevilrySettings.DEVILRY_STATIC_URL + '/devilry_header/app',
-      'devilry_authenticateduserinfo': DevilrySettings.DEVILRY_STATIC_URL + '/devilry_authenticateduserinfo'
+      'devilry_extjsextras': DevilrySettings.DEVILRY_STATIC_URL + '/devilry_extjsextras'
     },
-    requires: ['Ext.container.Viewport', 'Ext.layout.container.Border', 'Ext.layout.container.Column', 'Ext.layout.container.Card', 'devilry_extjsextras.Router', 'devilry_extjsextras.RouteNotFound', 'devilry_extjsextras.AlertMessage', 'devilry_header.Header', 'devilry_header.Breadcrumbs', 'devilry_extjsextras.FloatingAlertmessageList', 'devilry_authenticateduserinfo.UserInfo'],
-    controllers: ['DashboardController', 'AssignmentController'],
-    refs: [
-      {
-        ref: 'alertmessagelist',
-        selector: 'viewport floatingalertmessagelist#appAlertmessagelist'
-      }
-    ],
-    constructor: function() {
-      return this.callParent(arguments);
-    },
+    requires: ['devilry_extjsextras.Router', 'devilry_extjsextras.RouteNotFound'],
     launch: function() {
-      return this._createViewport();
-    },
-    _createViewport: function() {
-      this.viewport = Ext.create('Ext.container.Viewport', {
-        xtype: 'container',
-        layout: 'border'
-      });
-      this.viewport.setLoading();
-      return devilry_authenticateduserinfo.UserInfo.load(this._onUserInfoLoaded, this);
-    },
-    _onUserInfoLoaded: function(userInfoRecord) {
-      this.userInfoRecord = userInfoRecord;
-      this.breadcrumbs = Ext.create('devilry_header.Breadcrumbs');
-      this.primaryContentContainer = Ext.widget('container', {
-        region: 'center',
-        layout: 'fit'
-      });
-      this.viewport.removeAll();
-      this.viewport.add([
-        {
-          xtype: 'devilryheader',
-          region: 'north',
-          navclass: 'examiner',
-          breadcrumbs: this.breadcrumbs
-        }, {
-          xtype: 'container',
-          region: 'center',
-          cls: 'devilry_subtlebg',
-          layout: 'fit',
-          items: [
-            {
-              xtype: 'floatingalertmessagelist',
-              itemId: 'appAlertmessagelist',
-              anchor: '100%'
-            }, this.primaryContentContainer
-          ]
-        }
-      ]);
-      this.viewport.setLoading(false);
-      return this._onViewportReady();
-    },
-    _onViewportReady: function() {
       return this._setupRoutes();
-    },
-    setPrimaryContent: function(component) {
-      this.primaryContentContainer.removeAll();
-      return this.primaryContentContainer.add(component);
-    },
-    /*
-    Called after something has been deleted.
-    @param short_description A short description of the item that was deleted.
-    */
-
-    onAfterDelete: function(short_description) {
-      return this.route.navigate('');
     },
     /*
     Used by controllers to set the page title (the title-tag).
@@ -90,37 +23,16 @@
 
     _setupRoutes: function() {
       this.route = Ext.create('devilry_extjsextras.Router', this, {
-        listeners: {
-          scope: this,
-          beforeroute: this._beforeRoute
-        }
+        includePhysicalPath: true
       });
-      this.route.add("", 'dashboard');
-      this.route.add("/assignment/:assignmentId", 'assignment');
+      this.route.add("/", 'dashboard');
       return this.route.start();
     },
-    _beforeRoute: function(route, routeInfo) {
-      return this.getAlertmessagelist().removeAll();
-    },
     routeNotFound: function(routeInfo) {
-      this.breadcrumbs.set([], gettext('Route not found'));
-      return this.setPrimaryContent({
-        xtype: 'routenotfound',
-        route: routeInfo.token
-      });
+      return console.error('Route not found:', routeInfo.token);
     },
     dashboard: function() {
-      this.breadcrumbs.setHome();
-      return this.setPrimaryContent({
-        xtype: 'dashboard'
-      });
-    },
-    assignment: function(routeInfo, assignmentId) {
-      this.breadcrumbs.setHome();
-      return this.setPrimaryContent({
-        xtype: 'assignmentworkspace',
-        assignmentId: assignmentId
-      });
+      return console.log('TODO: dashboard route');
     }
   });
 
