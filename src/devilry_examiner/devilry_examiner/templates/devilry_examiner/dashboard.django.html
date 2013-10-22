@@ -1,0 +1,19 @@
+{% load static %}
+
+{% block title %}Devilry - example{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static "devilry_examiner/stylesheets/styles.css" %}" />
+    {#{% include "markup/mathjaxheader.django.html" %}#}
+{% endblock %}
+
+
+{% block body %}
+    <h1>Hello, world!</h1>
+
+    {% include "devilry_bootstrapbase/bootstrap-all-js.django.html" %}
+    <script type="text/javascript" src="{% url devilry-settings %}"></script>
+
+    <script type="text/javascript" src="{% url devilry_examiner_i18n %}"></script>
+    {% include "devilry_bootstrapbase/extjsapp.django.html" with appname="devilry_examiner" %}
+{% endblock %}
