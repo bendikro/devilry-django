@@ -10,10 +10,9 @@ Ext.application({
         'devilry_extjsextras.RouteNotFound'
     ]
 
-    #controllers: [
-        #'DashboardController'
-        #'AssignmentController'
-    #]
+    controllers: [
+        'DashboardController'
+    ]
 
     launch: ->
         @_setupRoutes()
@@ -41,5 +40,7 @@ Ext.application({
         console.error 'Route not found:', routeInfo.token
 
     dashboard: ->
-        console.log 'TODO: dashboard route'
+        console.log 'dashboard route'
+        Ext.create('devilry_examiner.view.dashboard.YourAssignments')
+
 })

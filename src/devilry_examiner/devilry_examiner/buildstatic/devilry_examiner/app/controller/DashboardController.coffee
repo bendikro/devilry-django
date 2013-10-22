@@ -2,27 +2,30 @@ Ext.define('devilry_examiner.controller.DashboardController', {
     extend: 'Ext.app.Controller'
 
     views: [
-        'dashboard.Dashboard'
+        #'dashboard.Dashboard'
+        'dashboard.YourAssignments'
     ]
 
     stores: []
 
+    refs: [{
+        ref: 'yourAssignments'
+        selector: 'yourAssignments'
+    }],
+
     init: () ->
         this.control({
-            'viewport dashboard': {
-                render: this._onRender
+            'yourAssignments': {
+                render: this._onRenderYourAssignments
             }
         })
 
-    _onRender: ->
-        console.log 'Render'
-
-    ###
-    _onLoadSuccess: function(records) {
-        this.getAllWhereIsAdminList().update({
-            loadingtext: null,
-            list: this._flattenListOfActive(records)
+    _onRenderYourAssignments: ->
+        #console.log @getYourAssignments()
+        @getYourAssignments().update({
+            assignments: [
+                {long_name: 'Oblig 1'}
+                {long_name: 'Oblig 2'}
+            ]
         })
-    }
-    ###
 })

@@ -23,8 +23,16 @@
             {% blocktrans %}Your assignments{% endblocktrans %}
         </h1>
         <div id="yourAssignments">
-            <ul></ul>
-            <a class="btn btn-default">{% trans "Show all" %}</a>
+            <script type="script/extjs-xtemplate" id="yourAssignmentsTemplate">
+                <ul>
+                    <tpl for="assignments">
+                        <li>
+                            {long_name}
+                        </li>
+                    </tpl>
+                </ul>
+                <a class="btn btn-default">{% trans "Show all" %}</a>
+            </script>
         </div>
     </div>
 {% endblock %}
