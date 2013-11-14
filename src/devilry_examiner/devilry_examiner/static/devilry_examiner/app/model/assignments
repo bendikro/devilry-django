@@ -1,0 +1,4 @@
+assignments = [
+    {long_name = "Bjalles Oblig 1"},
+    {long_name = "Bjalles Oblig 2"}
+]
