@@ -34,6 +34,7 @@ INSTALLED_APPS += [
     # 'raven.contrib.django.raven_compat', # Sentry client (Raven)
     'devilry_sandbox',
 
+    'devilry_developer',
     'devilry_examiner',
     'devilry_rest',
     'simple_rest',
@@ -41,7 +42,14 @@ INSTALLED_APPS += [
     # Not apps, but here for the Django test system to discover them:
     'devilry.utils',
     'devilry.restful',
-    'devilry.simplified']
+    'devilry.simplified',
+
+    ## For Trix development
+    #'trix',
+    #'trix_extjshelpers',
+    #'trix_restful',
+    #'trix_simplified',
+]
 
 
 INTERNAL_IPS = ["127.0.0.1"]
@@ -89,10 +97,6 @@ PASSWORD_HASHERS = (
 #DEVILRY_USERADMIN_PASSWORD_HELPMESSAGE = 'Passwords are handled by Our Awesome External User Management System. Follow <a href="https://awesome.example.com">this link</a> to reset passwords.'
 
 
-##################################################################################
-# Celery
-##################################################################################
-CELERY_ALWAYS_EAGER = True
 
 ##################################################################################
 # Haystack (search)
@@ -198,3 +202,20 @@ CACHES = {
 # RAVEN_CONFIG = {
 #     'dsn': 'http://85cc6c611c904a0ebb4afd363fe60fe4:32988134adad4044bc7d13f85f318498@localhost:9000/2',
 # }
+
+
+##################################################################################
+# Celery
+##################################################################################
+CELERY_ALWAYS_EAGER = True
+
+## For testing celery
+#CELERY_ALWAYS_EAGER = False
+#CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
+#BROKER_URL = 'django://'
+#INSTALLED_APPS += ['kombu.transport.django']
+
+## For testing django-celery-email
+#INSTALLED_APPS += ['djcelery_email']
+#EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
+#CELERY_EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

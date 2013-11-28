@@ -49,7 +49,7 @@ extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.intersphin
 # built documents.
 #
 # The short X.Y version.
-version = '1.3.1'
+version = '1.3.6'
 devilry_releasetype = ''
 # The full version, including alpha/beta/rc tags.
 release = '{0}-{1}'.format(version, devilry_releasetype)
@@ -136,7 +136,7 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'armstrong'
+#html_theme = 'armstrong'
 #html_theme = 'default'
 
 # Theme options are theme-specific and customize the look and feel of a theme
