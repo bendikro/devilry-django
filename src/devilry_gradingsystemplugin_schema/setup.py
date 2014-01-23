@@ -1,24 +1,18 @@
 from setuptools import setup, find_packages
 
 
-setup(name = 'devilry_settings',
-      description = 'Devilry settings.',
+setup(name = 'devilry_gradingsystemplugin_schema',
+      description = 'Devilry grading system plugin that requires examiners fill in a schema.',
       version = '1.0',
       license='BSD',
       author = 'Espen Angell Kristiansen',
       packages=find_packages(exclude=['ez_setup']),
       install_requires = [
-            'setuptools',
-            'devilry',
-            'devilry_examiner',
-            'devilry_gradingsystem',
-            'devilry_gradingsystemplugin_points',
-            'devilry_gradingsystemplugin_approved',
-            'devilry_gradingsystemplugin_schema',
-            'django_decoupled_docs',
+          'setuptools',
+          'django-crispy-forms',
       ],
       include_package_data=True,
-      long_description = open('README.rst').read(),
+      long_description = 'Grading system plugin.',
       zip_safe=False,
       classifiers=[
                    'Development Status :: 4 - Beta',
