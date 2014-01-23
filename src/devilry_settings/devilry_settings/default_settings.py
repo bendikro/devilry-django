@@ -94,7 +94,7 @@ INSTALLED_APPS = ['django.contrib.markup',
                   'devilry_gradingsystem',
                   'devilry_gradingsystemplugin_points',
                   'devilry_gradingsystemplugin_approved',
-                  'devilry_gradingsystemplugin_schema',
+                  'devilry_gradingsystemplugin_form',
                   'devilry_rest',
                  ]
 

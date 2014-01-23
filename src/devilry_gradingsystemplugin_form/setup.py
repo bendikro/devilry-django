@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 
-setup(name = 'devilry_gradingsystemplugin_schema',
+setup(name = 'devilry_gradingsystemplugin_form',
       description = 'Devilry grading system plugin that requires examiners fill in a schema.',
       version = '1.0',
       license='BSD',

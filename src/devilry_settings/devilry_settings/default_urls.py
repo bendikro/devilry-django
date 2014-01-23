@@ -35,6 +35,6 @@ devilry_urls = ((r'^student/', include('devilry.apps.student.urls')),
                 url(r'^devilry_gradingsystem/', include('devilry_gradingsystem.urls')),
                 url(r'^devilry_gradingsystemplugin_points/', include('devilry_gradingsystemplugin_points.urls')),
                 url(r'^devilry_gradingsystemplugin_approved/', include('devilry_gradingsystemplugin_approved.urls')),
-                url(r'^devilry_gradingsystemplugin_schema/', include('devilry_gradingsystemplugin_schema.urls')),
+                url(r'^devilry_gradingsystemplugin_form/', include('devilry_gradingsystemplugin_form.urls')),
                 (r'^$', frontpage),
 )

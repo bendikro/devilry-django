@@ -26,7 +26,7 @@ class SchemaFeedbackEditorForm(FeedbackEditorFormBase):
 
 
 class SchemaFeedbackEditorView(FeedbackEditorFormView):
-    template_name = 'devilry_gradingsystemplugin_schema/feedbackeditor.django.html'
+    template_name = 'devilry_gradingsystemplugin_form/feedbackeditor.django.html'
     form_class = SchemaFeedbackEditorForm
 
     def get_initial_from_last_draft(self):
@@ -52,7 +52,7 @@ class SchemaFeedbackBulkEditorForm(FeedbackBulkEditorFormBase):
         self.add_common_layout_elements()
 
 class SchemaFeedbackBulkEditorView(FeedbackBulkEditorFormView):
-    template_name = 'devilry_gradingsystemplugin_schema/feedbackbulkeditor.django.html'
+    template_name = 'devilry_gradingsystemplugin_form/feedbackbulkeditor.django.html'
     form_class = SchemaFeedbackBulkEditorForm
 
     def get_initial_from_draft(self, draft):
