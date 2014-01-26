@@ -45,16 +45,16 @@ urlpatterns = patterns(
         name='devilry_subjectadmin_subject'),
 
     # Views that just redirect to ``/devilry_subjectadmin/#<some-path>``
-    url('^subject/(?P<id>\d+)',
+    url('^subject/(?P<id>\d+)$',
         login_required(RedirectToSubjectAdminAppView.as_view(pathformat='/subject/{id}/')),
         name='devilry_subjectadmin_subject'),
-    url('^period/(?P<id>\d+)',
+    url('^period/(?P<id>\d+)$',
         login_required(RedirectToSubjectAdminAppView.as_view(pathformat='/period/{id}/')),
         name='devilry_subjectadmin_period'),
-    url('^assignment/(?P<id>\d+)',
+    url('^assignment/(?P<id>\d+)$',
         login_required(RedirectToSubjectAdminAppView.as_view(pathformat='/assignment/{id}/')),
         name='devilry_subjectadmin_assignment'),
-    url('^group/(?P<id>\d+)',
+    url('^group/(?P<id>\d+)$',
         login_required(RedirectToGroupAdminAppView.as_view()),
         name='devilry_subjectadmin_group'),
 )
