@@ -42,6 +42,9 @@ INSTALLED_APPS += [
     'devilry.restful',
     'devilry.simplified',
 
+    # Apps that are added for tests ONLY - typically to mock models or other parts of the Django magic
+    'devilry_gradingsystemplugin_form.devilry_gradingsystemplugin_form_testapp',
+
     ## For Trix development
     #'trix',
     #'trix_extjshelpers',
