@@ -1,2 +1,2 @@
-from .test_models import TestAbstractSortableModel
+from .test_abstract_sortable_model import TestAbstractSortableModel
 from .test_views_feedbackeditor import TestFeedbackEditorView
