@@ -3,10 +3,6 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.db import models
 
-
-#from devilry_developer.testhelpers.corebuilder import PeriodBuilder
-#from devilry_developer.testhelpers.corebuilder import UserBuilder
-# from devilry_gradingsystemplugin_form.models import 
 from devilry_gradingsystemplugin_form.devilry_gradingsystemplugin_form_testapp.models import SortableModel
 from devilry_gradingsystemplugin_form.devilry_gradingsystemplugin_form_testapp.models import ContainerModel
 
