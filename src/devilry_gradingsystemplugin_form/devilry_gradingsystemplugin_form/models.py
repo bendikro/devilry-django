@@ -62,7 +62,7 @@ class Question(models.Model):
     define min/max points automatically from the alternatives.
     """
     section = models.ForeignKey(Form)
-    question_type = models.ChoiceField(
+    question_type = models.CharField(
         default='question',
         max_length=40,
         choices=(
