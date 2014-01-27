@@ -8,6 +8,7 @@ from .views.extjsapp import AppView
 from .views.redirectviews import RedirectToSubjectAdminAppView
 from .views.redirectviews import RedirectToGroupAdminAppView
 from .views.assignment_update import AssignmentUpdateView
+from .views.assignment_add_students import AssignmentAddStudentsView
 from .exportdetailedperiodoverview import ExportDetailedPeriodOverview
 
 
@@ -38,6 +39,10 @@ urlpatterns = patterns(
     url('assignment/(?P<id>\d+)/update',
         login_required(AssignmentUpdateView.as_view()),
         name='devilry_subjectadmin_assignment_update'),
+
+    url('assignment/(?P<id>\d+)/add-students',
+        login_required(AssignmentAddStudentsView.as_view()),
+        name='devilry_subjectadmin_assignment_add_students'),
 
     # Views that just redirect to ``/devilry_subjectadmin/#<some-path>``
     url('^subject/(?P<id>\d+)',
