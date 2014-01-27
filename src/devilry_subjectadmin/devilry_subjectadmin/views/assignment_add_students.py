@@ -11,6 +11,17 @@ from devilry_examiner.views.add_deadline import DevilryDatetimeFormField
 
 
 class AssignmentAddStudentsView(UpdateView):
+    """
+    Add students to assignment view.
+
+    - Updates ``first_deadline`` on the assignment each time we add students (so the last used
+      first deadline is always suggested when adding new students).
+    - Adds students to the assignment.
+    - Supports the following extra options:
+        - Include the tags from the period.
+        - Setup examiners by tags. Matches the tags of examiners on the period
+          agains the tags of students on the period.
+    """
     model = Assignment
     template_name = 'devilry_subjectadmin/assignment_add_students_form.django.html'
     pk_url_kwarg = 'id'
