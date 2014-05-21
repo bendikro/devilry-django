@@ -23,5 +23,33 @@
         </ol>
     </div>
 
+    <div class="container feedback-text">
+        {{ object.last_feedback.rendered_view }}
+    </div>
+
+    <div class="container delivery-meta">
+        <div class="files">
+            <h5>{% trans "Files" %}</h5>
+            {% for file in object.filemetas.all %}
+                <p>{{ file }}</p>
+            {% endfor %}
+        </div>
+        <div class="delivered-by">
+            <h5>{% trans "Delivered by:" %}</h5>
+            <p>{{ object.delivered_by }}</p>
+        </div>
+        <div class="time-of-delivery">
+            <h5>{% trans "Time of delivery:" %}</h5>
+            <p>{{ object.time_of_delivery }}</p>
+        </div>
+        <div class="deadline">
+            <h5>{% trans "Deadline:" %}</h5>
+            <p>{{ object.deadline.deadline }}</p>
+        </div>
+        <div class="feedback-written-by">
+            <h5>{% trans "Feedback written by: " %} </h5>
+            <p>{{ object.last_feedback.saved_by }}</p>
+        </div>
+    </div>
 
 {% endblock body %}
