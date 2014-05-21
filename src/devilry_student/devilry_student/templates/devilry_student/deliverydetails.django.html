@@ -10,9 +10,18 @@
 {% block body %}
     <div class="container">
         <div class="page-header">
-            <h1>Delivery Details</h1>
+            <h1>{% trans "Delivery #" %}{{ object.number }}</h1>
         </div>
+        <ol class="breadcrumb">
+            <li><a href="{% url 'devilry_student' %}">{% trans "Home" %}</a></li>
+            <li><a href="{% url 'devilry_student_browse' %}">{% trans "Browse" %}</a></li>
+            <li>{{ object.assignment.parentnode.parentnode.short_name }} &ndash; {{ object.assignment.parentnode.short_name }}</li>
+            <li>{{ object.assignment.long_name }}</li> {% comment %}
+                TODO: Link
+            {% endcomment %}
+            <li class="active">{% trans "Delivery #" %}{{ object.number }}</li>
+        </ol>
     </div>
 
-    
+
 {% endblock body %}
