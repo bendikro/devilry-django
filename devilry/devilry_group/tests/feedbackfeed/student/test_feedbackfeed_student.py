@@ -111,8 +111,7 @@ class TestFeedbackfeedStudent(TestCase, test_feedbackfeed_common.TestFeedbackFee
                                assignment_group=group,
                                relatedstudent=mommy.make('core.RelatedStudent'))
         feedbackset1 = mommy.make('devilry_group.FeedbackSet',
-                                  group=group,
-                                  is_last_in_group=False)
+                                  group=group)
         feedbackset2 = mommy.make('devilry_group.FeedbackSet',
                                   group=group,
                                   deadline_datetime=timezone.now()+timezone.timedelta(days=1))
@@ -381,8 +380,7 @@ class TestFeedbackPublishingStudent(TestCase, cradmin_testhelpers.TestCaseMixin)
         group = mommy.make('core.AssignmentGroup',
                            parentnode=assignment)
         group_mommy.feedbackset_first_attempt_published(
-                group=group,
-                is_last_in_group=None)
+                group=group)
         feedbackset_last = group_mommy.feedbackset_new_attempt_unpublished(
                 group=group,
                 deadline_datetime=timezone.now()+timezone.timedelta(days=1))

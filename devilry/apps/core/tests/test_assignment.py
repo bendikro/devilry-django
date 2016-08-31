@@ -11,6 +11,7 @@ from devilry.apps.core.models import Candidate
 from devilry.apps.core.models import Examiner, AssignmentGroup
 from devilry.apps.core.models import PointToGradeMap
 from devilry.apps.core.models.assignment import AssignmentHasGroupsError
+from devilry.devilry_dbcache.customsql import AssignmentGroupDbCacheCustomSql
 from devilry.devilry_gradingsystem.pluginregistry import GradingSystemPluginInterface
 from devilry.devilry_gradingsystem.pluginregistry import GradingSystemPluginRegistry
 from devilry.devilry_group.models import FeedbackSet
@@ -655,13 +656,17 @@ class TestAssignmentQuerySetFilterExaminerHasAccess(TestCase):
 
 
 class TestAssignmentQuerySetAnnotateWithWaitingForFeedback(TestCase):
+
+    def setUp(self):
+        AssignmentGroupDbCacheCustomSql().initialize()
+
     def test_annotate_with_waiting_for_feedback_count_nomatch_deadline_not_expired(self):
         mommy.make('devilry_group.FeedbackSet',
                    grading_published_datetime=None,
                    group__parentnode__first_deadline=timezone.now() - timedelta(days=1),
                    deadline_datetime=timezone.now() + timedelta(days=1),
                    feedbackset_type=FeedbackSet.FEEDBACKSET_TYPE_NEW_ATTEMPT,
-                   is_last_in_group=True)
+                   )
         queryset = Assignment.objects.all().annotate_with_waiting_for_feedback_count()
         self.assertEqual(0, queryset.first().waiting_for_feedback_count)
 
@@ -671,17 +676,7 @@ class TestAssignmentQuerySetAnnotateWithWaitingForFeedback(TestCase):
                    grading_published_datetime=None,
                    deadline_datetime=None,
                    feedbackset_type=FeedbackSet.FEEDBACKSET_TYPE_FIRST_ATTEMPT,
-                   is_last_in_group=True)
-        queryset = Assignment.objects.all().annotate_with_waiting_for_feedback_count()
-        self.assertEqual(0, queryset.first().waiting_for_feedback_count)
-
-    def test_annotate_with_waiting_for_feedback_count_nomatch_is_not_last_in_group(self):
-        mommy.make('devilry_group.FeedbackSet',
-                   grading_published_datetime=None,
-                   group__parentnode__first_deadline=timezone.now() - timedelta(days=2),
-                   feedbackset_type=FeedbackSet.FEEDBACKSET_TYPE_NEW_ATTEMPT,
-                   deadline_datetime=timezone.now() - timedelta(days=1),
-                   is_last_in_group=None)
+                   )
         queryset = Assignment.objects.all().annotate_with_waiting_for_feedback_count()
         self.assertEqual(0, queryset.first().waiting_for_feedback_count)
 
@@ -691,7 +686,7 @@ class TestAssignmentQuerySetAnnotateWithWaitingForFeedback(TestCase):
                    group__parentnode__first_deadline=timezone.now() - timedelta(days=2),
                    deadline_datetime=timezone.now() - timedelta(days=2),
                    feedbackset_type=FeedbackSet.FEEDBACKSET_TYPE_NEW_ATTEMPT,
-                   is_last_in_group=True)
+                   )
         queryset = Assignment.objects.all().annotate_with_waiting_for_feedback_count()
         self.assertEqual(0, queryset.first().waiting_for_feedback_count)
 
@@ -703,13 +698,13 @@ class TestAssignmentQuerySetAnnotateWithWaitingForFeedback(TestCase):
                    grading_published_datetime=timezone.now() - timedelta(days=1),
                    deadline_datetime=timezone.now() - timedelta(days=2),
                    feedbackset_type=FeedbackSet.FEEDBACKSET_TYPE_FIRST_ATTEMPT,
-                   is_last_in_group=None)
+                   )
         mommy.make('devilry_group.FeedbackSet',
                    group=testgroup,
                    grading_published_datetime=None,
                    deadline_datetime=timezone.now() - timedelta(days=1),
                    feedbackset_type=FeedbackSet.FEEDBACKSET_TYPE_NEW_ATTEMPT,
-                   is_last_in_group=True)
+                   )
         queryset = Assignment.objects.all().annotate_with_waiting_for_feedback_count()
         self.assertEqual(1, queryset.first().waiting_for_feedback_count)
 
@@ -720,17 +715,17 @@ class TestAssignmentQuerySetAnnotateWithWaitingForFeedback(TestCase):
                    group__parentnode=testassignment,
                    grading_published_datetime=timezone.now() - timedelta(days=1),
                    deadline_datetime=timezone.now() - timedelta(days=2),
-                   is_last_in_group=None)
+                   )
         mommy.make('devilry_group.FeedbackSet',
                    group__parentnode=testassignment,
                    grading_published_datetime=None,
                    feedbackset_type=FeedbackSet.FEEDBACKSET_TYPE_FIRST_ATTEMPT,
-                   is_last_in_group=True)
+                   )
         mommy.make('devilry_group.FeedbackSet',
                    group__parentnode=testassignment,
                    grading_published_datetime=None,
                    feedbackset_type=FeedbackSet.FEEDBACKSET_TYPE_FIRST_ATTEMPT,
-                   is_last_in_group=True)
+                   )
         queryset = Assignment.objects.all().annotate_with_waiting_for_feedback_count()
         self.assertEqual(2, queryset.first().waiting_for_feedback_count)
 
@@ -743,22 +738,25 @@ class TestAssignmentQuerySetAnnotateWithWaitingForFeedback(TestCase):
                    group__parentnode=testassignment1,
                    grading_published_datetime=timezone.now() - timedelta(days=1),
                    deadline_datetime=timezone.now() - timedelta(days=2),
-                   is_last_in_group=None)
-        mommy.make('devilry_group.FeedbackSet',
+                   )
+        feedbackset = mommy.make('devilry_group.FeedbackSet',
                    group__parentnode=testassignment1,
                    grading_published_datetime=None,
                    deadline_datetime=timezone.now() - timedelta(days=1),
-                   is_last_in_group=True)
+                   )
         mommy.make('devilry_group.FeedbackSet',
                    group__parentnode=testassignment2,
                    grading_published_datetime=None,
                    deadline_datetime=timezone.now() - timedelta(days=1),
-                   is_last_in_group=True)
+                   )
         mommy.make('devilry_group.FeedbackSet',
                    group__parentnode=testassignment2,
                    grading_published_datetime=None,
                    deadline_datetime=timezone.now() - timedelta(days=1),
-                   is_last_in_group=True)
+                   )
+
+        print "Group:", feedbackset.group.cached_data
+
         queryset = Assignment.objects.all().annotate_with_waiting_for_feedback_count()
         self.assertEqual(2, queryset.count())
         self.assertEqual(1, queryset.get(pk=testassignment1.pk).waiting_for_feedback_count)

@@ -88,7 +88,7 @@ class TestFeedbackFeedHeaderMixin(cradmin_testhelpers.TestCaseMixin):
         # tests that if there are multiple FeedbackSets', the deadline of the last FeedbackSet should be shown.
         testassignment = mommy.make_recipe('devilry.apps.core.assignment_activeperiod_start')
         testgroup = mommy.make('core.AssignmentGroup', parentnode=testassignment)
-        group_mommy.feedbackset_first_attempt_published(group=testgroup, is_last_in_group=None)
+        group_mommy.feedbackset_first_attempt_published(group=testgroup)
         testfeedbackset = group_mommy.feedbackset_new_attempt_unpublished(
                 group=testgroup,
                 deadline_datetime=timezone.now() + timezone.timedelta(days=10))
@@ -343,7 +343,6 @@ class TestFeedbackFeedMixin(TestFeedbackFeedHeaderMixin, TestFeedbackFeedGroupCo
         group = mommy.make('core.AssignmentGroup')
         mommy.make('devilry_group.FeedbackSet',
                    group=group,
-                   is_last_in_group=None,
                    created_datetime=timezone.now() - timezone.timedelta(days=2),
                    deadline_datetime=timezone.now() - timezone.timedelta(days=1))
         mommy.make('devilry_group.FeedbackSet',
@@ -360,7 +359,6 @@ class TestFeedbackFeedMixin(TestFeedbackFeedHeaderMixin, TestFeedbackFeedGroupCo
         group = mommy.make('core.AssignmentGroup')
         mommy.make('devilry_group.FeedbackSet',
                    group=group,
-                   is_last_in_group=None,
                    created_datetime=timezone.now() - timezone.timedelta(days=4),
                    deadline_datetime=timezone.now() - timezone.timedelta(days=3))
         mommy.make('devilry_group.FeedbackSet',
@@ -377,8 +375,7 @@ class TestFeedbackFeedMixin(TestFeedbackFeedHeaderMixin, TestFeedbackFeedGroupCo
         group = mommy.make('core.AssignmentGroup',
                            parentnode__first_deadline=timezone.now() + timezone.timedelta(days=3))
         mommy.make('devilry_group.FeedbackSet',
-                   group=group,
-                   is_last_in_group=None)
+                   group=group)
         mommy.make('devilry_group.FeedbackSet',
                    group=group,
                    feedbackset_type=models.FeedbackSet.FEEDBACKSET_TYPE_NEW_ATTEMPT,
@@ -393,8 +390,7 @@ class TestFeedbackFeedMixin(TestFeedbackFeedHeaderMixin, TestFeedbackFeedGroupCo
         group = mommy.make('core.AssignmentGroup',
                            parentnode__first_deadline=timezone.now() - timezone.timedelta(days=8))
         mommy.make('devilry_group.FeedbackSet',
-                   group=group,
-                   is_last_in_group=None)
+                   group=group)
         mommy.make('devilry_group.FeedbackSet',
                    group=group,
                    created_datetime=timezone.now() - timezone.timedelta(days=6),

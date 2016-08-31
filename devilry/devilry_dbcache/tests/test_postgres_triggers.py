@@ -432,11 +432,11 @@ class TestRecrateCacheData(test.TestCase):
         feedbackset2_1 = devilry_group_mommy_factories.feedbackset_first_attempt_unpublished(group=testgroup2)
 
         testgroup3 = mommy.make('core.AssignmentGroup')
-        feedbackset3_1 = devilry_group_mommy_factories.feedbackset_first_attempt_unpublished(group=testgroup3, is_last_in_group=None)
+        feedbackset3_1 = devilry_group_mommy_factories.feedbackset_first_attempt_unpublished(group=testgroup3)
         feedbackset3_2 = devilry_group_mommy_factories.feedbackset_new_attempt_published(group=testgroup3)
 
         testgroup4 = mommy.make('core.AssignmentGroup')
-        feedbackset4_1 = devilry_group_mommy_factories.feedbackset_first_attempt_unpublished(group=testgroup4, is_last_in_group=None)
+        feedbackset4_1 = devilry_group_mommy_factories.feedbackset_first_attempt_unpublished(group=testgroup4)
         feedbackset4_2 = devilry_group_mommy_factories.feedbackset_new_attempt_unpublished(group=testgroup4)
 
         AssignmentGroupDbCacheCustomSql().recreate_data()
@@ -598,7 +598,7 @@ class TestBenchMarkFeedbackSetTrigger(test.TestCase):
 
         feedbacksets = []
         for group in AssignmentGroup.objects.filter(parentnode=assignment):
-            feedbackset = mommy.prepare(FeedbackSet, group=group, created_by=created_by, is_last_in_group=None)
+            feedbackset = mommy.prepare(FeedbackSet, group=group, created_by=created_by)
             feedbacksets.append(feedbackset)
 
         with TimeExecution('{} ({})'.format(label, count)):
@@ -619,7 +619,7 @@ class TestBenchMarkFeedbackSetTrigger(test.TestCase):
 
         feedbacksets = []
         for x in range(count):
-            feedbackset = mommy.prepare(FeedbackSet, group=group, created_by=created_by, is_last_in_group=None)
+            feedbackset = mommy.prepare(FeedbackSet, group=group, created_by=created_by)
             feedbacksets.append(feedbackset)
 
         with TimeExecution('{} ({})'.format(label, count)):

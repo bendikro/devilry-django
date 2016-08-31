@@ -16,6 +16,10 @@ from devilry.devilry_dbcache.customsql import AssignmentGroupDbCacheCustomSql
 
 
 class TestGroupDetailsRenderable(test.TestCase):
+
+    def setUp(self):
+        AssignmentGroupDbCacheCustomSql().initialize()
+
     def test_name(self):
         testgroup = mommy.make('core.AssignmentGroup')
         mommy.make('core.Candidate',
@@ -159,7 +163,6 @@ class TestGroupDetailsRenderable(test.TestCase):
         self.assertFalse(selector.exists('.devilry-cradmin-groupitemvalue-grade'))
 
     def test_grade_comment_summary_is_available(self):
-        AssignmentGroupDbCacheCustomSql().initialize()
         mommy.make('core.AssignmentGroup')
         testgroup = AssignmentGroup.objects\
             .annotate_with_number_of_commentfiles_from_students()\

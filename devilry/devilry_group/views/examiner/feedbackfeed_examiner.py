@@ -292,7 +292,6 @@ class ExaminerFeedbackCreateFeedbackSetView(ExaminerBaseFeedbackFeedView):
             comment (GroupComment): Get :obj:`~devilry.devilry_group.models.FeedbackSet` from.
         """
         current_feedbackset = group_models.FeedbackSet.objects.get(id=comment.feedback_set_id)
-        current_feedbackset.is_last_in_group = None
         current_feedbackset.grading_published_by = comment.user
         current_feedbackset.full_clean()
         current_feedbackset.save()

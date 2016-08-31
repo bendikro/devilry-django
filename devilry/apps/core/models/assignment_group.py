@@ -755,7 +755,7 @@ class AssignmentGroupQuerySet(models.QuerySet, BulkCreateQuerySetMixin):
         from devilry.devilry_group.models import FeedbackSet
         now = timezone.now()
         whenquery = models.Q(
-            feedbackset__is_last_in_group=True,
+            feedbackset__id=models.F('feedbackset__group__cached_data__last_feedbackset__id'),
             feedbackset__grading_published_datetime__isnull=True
         ) & (
             models.Q(
@@ -787,7 +787,7 @@ class AssignmentGroupQuerySet(models.QuerySet, BulkCreateQuerySetMixin):
         from devilry.devilry_group.models import FeedbackSet
         now = timezone.now()
         whenquery = models.Q(
-            feedbackset__is_last_in_group=True,
+            feedbackset__id=models.F('feedbackset__group__cached_data__last_feedbackset__id'),
             feedbackset__grading_published_datetime__isnull=True
         ) & (
             models.Q(
@@ -817,7 +817,7 @@ class AssignmentGroupQuerySet(models.QuerySet, BulkCreateQuerySetMixin):
         :obj:`~devilry.devilry_group.models.FeedbackSet.grading_published_datetime`.
         """
         whenquery = models.Q(
-            feedbackset__is_last_in_group=True,
+            feedbackset__id=models.F('feedbackset__group__cached_data__last_feedbackset__id'),
             feedbackset__grading_published_datetime__isnull=False
         )
         return self.annotate(
@@ -847,7 +847,7 @@ class AssignmentGroupQuerySet(models.QuerySet, BulkCreateQuerySetMixin):
             grading_points=models.Sum(
                 models.Case(
                     models.When(
-                        feedbackset__is_last_in_group=True,
+                        feedbackset__id=models.F('feedbackset__group__cached_data__last_feedbackset__id'),
                         then='feedbackset__grading_points'
                     )
                 )
@@ -870,7 +870,7 @@ class AssignmentGroupQuerySet(models.QuerySet, BulkCreateQuerySetMixin):
             is_passing_grade=devilry_djangoaggregate_functions.BooleanCount(
                 models.Case(
                     models.When(
-                        feedbackset__is_last_in_group=True,
+                        feedbackset__id=models.F('feedbackset__group__cached_data__last_feedbackset__id'),
                         feedbackset__grading_published_datetime__isnull=False,
                         feedbackset__grading_points__gte=models.F('parentnode__passing_grade_min_points'),
                         then=1
@@ -889,7 +889,7 @@ class AssignmentGroupQuerySet(models.QuerySet, BulkCreateQuerySetMixin):
             datetime_of_last_student_comment=devilry_djangoaggregate_functions.BooleanCount(
                 models.Case(
                     models.When(
-                        feedbackset__is_last_in_group=True,
+                        feedbackset__id=models.F('feedbackset__group__cached_data__last_feedbackset__id'),
                         feedbackset__grading_published_datetime__isnull=False,
                         feedbackset__grading_points__gte=models.F('parentnode__passing_grade_min_points'),
                         then=1

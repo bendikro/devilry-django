@@ -52,8 +52,7 @@ class TestFeedbackfeedExaminerFeedback(TestCase, test_feedbackfeed_examiner.Test
     def test_get_feedbackset_second_created_deadline_event(self):
         assignment = mommy.make_recipe('devilry.apps.core.assignment_activeperiod_start')
         feedbackset = group_mommy.feedbackset_first_attempt_unpublished(
-            group__parentnode=assignment,
-            is_last_in_group=None)
+            group__parentnode=assignment)
         group_mommy.feedbackset_new_attempt_unpublished(group=feedbackset.group)
         mockresponse = self.mock_http200_getrequest_htmls(cradmin_role=feedbackset.group)
         self.assertTrue(mockresponse.selector.exists('.devilry-group-feedbackfeed-event-message-deadline-created'))
@@ -252,7 +251,7 @@ class TestFeedbackFeedExaminerPublishFeedback(TestCase, test_feedbackfeed_examin
                 'devilry.apps.core.assignment_activeperiod_start',
                 grading_system_plugin_id=core_models.Assignment.GRADING_SYSTEM_PLUGIN_ID_PASSEDFAILED)
         group = mommy.make('core.AssignmentGroup', parentnode=assignment)
-        group_mommy.feedbackset_first_attempt_published(group=group, is_last_in_group=None)
+        group_mommy.feedbackset_first_attempt_published(group=group)
         group_mommy.feedbackset_new_attempt_unpublished(group=group, deadline_datetime=None)
         examiner = mommy.make('core.Examiner',
                               assignmentgroup=group,
@@ -363,7 +362,7 @@ class TestFeedbackFeedExaminerPublishFeedback(TestCase, test_feedbackfeed_examin
                 'devilry.apps.core.assignment_activeperiod_start',
                 grading_system_plugin_id=core_models.Assignment.GRADING_SYSTEM_PLUGIN_ID_PASSEDFAILED)
         group = mommy.make('core.AssignmentGroup', parentnode=assignment)
-        feedbackset_first = group_mommy.feedbackset_first_attempt_published(is_last_in_group=None, group=group)
+        feedbackset_first = group_mommy.feedbackset_first_attempt_published(group=group)
         feedbackset_last = group_mommy.feedbackset_new_attempt_unpublished(group=group,
                                                                            deadline_datetime=timezone.now())
         examiner = mommy.make('core.Examiner',
@@ -604,8 +603,7 @@ class TestExaminerCreateNewFeedbackSet(TestCase, cradmin_testhelpers.TestCaseMix
     def test_get_feedbackset_second_created_deadline_event(self):
         assignment = mommy.make_recipe('devilry.apps.core.assignment_activeperiod_start')
         feedbackset = group_mommy.feedbackset_first_attempt_published(
-            group__parentnode=assignment,
-            is_last_in_group=None)
+            group__parentnode=assignment)
         group_mommy.feedbackset_new_attempt_published(group=feedbackset.group)
         mockresponse = self.mock_http200_getrequest_htmls(cradmin_role=feedbackset.group)
         self.assertTrue(mockresponse.selector.exists('.devilry-group-feedbackfeed-event-message-deadline-created'))
@@ -635,8 +633,8 @@ class TestExaminerCreateNewFeedbackSet(TestCase, cradmin_testhelpers.TestCaseMix
         examiner = mommy.make('core.Examiner',
                               assignmentgroup=group,
                               relatedexaminer=mommy.make('core.RelatedExaminer'))
-        group_mommy.feedbackset_first_attempt_published(group=examiner.assignmentgroup, is_last_in_group=None)
-        group_mommy.feedbackset_new_attempt_published(group=examiner.assignmentgroup, is_last_in_group=None)
+        group_mommy.feedbackset_first_attempt_published(group=examiner.assignmentgroup)
+        group_mommy.feedbackset_new_attempt_published(group=examiner.assignmentgroup)
         group_mommy.feedbackset_new_attempt_unpublished(group=examiner.assignmentgroup)
         mockresponse = self.mock_getrequest(cradmin_role=examiner.assignmentgroup)
         self.assertEquals(302, mockresponse.response.status_code)

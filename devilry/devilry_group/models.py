@@ -177,7 +177,7 @@ class FeedbackSet(models.Model):
 
     #: Is the last feedbackset for :obj:`~.FeedbackSet.group`? Must be None or True.
     #: TODO: Remove this field - functionality is in AssignmentGroupCachedData
-    is_last_in_group = models.NullBooleanField(default=True)
+    #is_last_in_group = models.NullBooleanField(default=True)
 
     #: This means the feedbackset is basically the first feedbackset.
     #: Choice for :obj:`~.FeedbackSet.feedbackset_type`.
@@ -261,12 +261,6 @@ class FeedbackSet(models.Model):
         null=False, blank=True, default=''
     )
 
-    class Meta:
-        unique_together = ('group', 'is_last_in_group')
-        # index_together = (
-        #     'id', 'created_datetime'
-        # )
-
     def __unicode__(self):
         return u"{} - {} - {} - deadline: {} - points: {}".format(
                 self.group.assignment,
@@ -298,10 +292,10 @@ class FeedbackSet(models.Model):
                 'grading_published_datetime': ugettext_lazy('An assignment can not be published '
                                                             'without providing "points".'),
             })
-        if self.is_last_in_group is False:
-            raise ValidationError({
-                'is_last_in_group': 'is_last_in_group can not be false.'
-            })
+        # if self.is_last_in_group is False:
+        #     raise ValidationError({
+        #         'is_last_in_group': 'is_last_in_group can not be false.'
+        #     })
 
     def current_deadline(self, assignment=None):
         """
@@ -380,6 +374,8 @@ class FeedbackSet(models.Model):
         self.gradeform_data_json = json.dumps(gradeform_data)
         if hasattr(self, '_gradeform_data'):
             delattr(self, '_gradeform_data')
+
+
 
 
 class GroupCommentQuerySet(AbstractGroupCommentQuerySet):

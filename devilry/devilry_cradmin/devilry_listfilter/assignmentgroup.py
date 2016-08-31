@@ -233,7 +233,7 @@ class StatusRadioFilter(abstractradio.AbstractRadioFilter):
             count=self.__count_html(count=count, has_count_cssclass=has_count_cssclass)))
 
     def get_choices(self):
-        return [
+        c = [
             ('',
              self.__make_label(
                  label=pgettext('group status', 'all students'),
@@ -256,6 +256,8 @@ class StatusRadioFilter(abstractradio.AbstractRadioFilter):
                  count=self.view.get_filtered_corrected_count()
              )),
         ]
+        print "CHOICED:", c
+        return c
 
     def filter(self, queryobject):
         cleaned_value = self.get_cleaned_value() or ''

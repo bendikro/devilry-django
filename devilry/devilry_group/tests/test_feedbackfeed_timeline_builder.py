@@ -5,12 +5,16 @@ from django.conf import settings
 
 from model_mommy import mommy
 
+from devilry.devilry_dbcache.customsql import AssignmentGroupDbCacheCustomSql
 from devilry.devilry_group import devilry_group_mommy_factories as group_mommy
 from devilry.devilry_group.timeline_builder.feedbackfeed_timeline_builder import FeedbackFeedTimelineBuilder
 from devilry.devilry_group import models as group_models
 
 
 class TestFeedbackFeedTimelineBuilder(TestCase, object):
+
+    def setUp(self):
+        AssignmentGroupDbCacheCustomSql().initialize()
 
     def test_get_last_deadline_one_feedbackset(self):
         testuser = mommy.make(settings.AUTH_USER_MODEL)
@@ -19,16 +23,13 @@ class TestFeedbackFeedTimelineBuilder(TestCase, object):
         mommy.make('devilry_group.FeedbackSet', group=group)
         timelinebuilder = FeedbackFeedTimelineBuilder(group=group, requestuser=testuser, devilryrole='unused')
         timelinebuilder.build()
-        self.assertEquals(1, len(timelinebuilder.feedbacksets))
+        self.assertEquals(2, len(timelinebuilder.feedbacksets))
         self.assertEquals(assignment.first_deadline, timelinebuilder.get_last_deadline())
 
     def test_get_last_deadline_two_feedbackset(self):
         testuser = mommy.make(settings.AUTH_USER_MODEL)
         assignment = mommy.make_recipe('devilry.apps.core.assignment_activeperiod_start')
         group = mommy.make('core.AssignmentGroup', parentnode=assignment)
-        mommy.make('devilry_group.FeedbackSet',
-                   group=group,
-                   is_last_in_group=None)
         feedbackset_last = mommy.make('devilry_group.FeedbackSet',
                                       group=group,
                                       deadline_datetime=timezone.now(),
@@ -45,18 +46,15 @@ class TestFeedbackFeedTimelineBuilder(TestCase, object):
         now = timezone.now()
         group_mommy.feedbackset_first_attempt_published(
                 group=group,
-                is_last_in_group=None,
                 created_datetime=now - timezone.timedelta(days=20),
                 grading_published_datetime=now-timezone.timedelta(days=19))
         group_mommy.feedbackset_new_attempt_published(
                 group=group,
-                is_last_in_group=None,
                 created_datetime=now - timezone.timedelta(days=18),
                 deadline_datetime=now-timezone.timedelta(days=17),
                 grading_published_datetime=now-timezone.timedelta(days=16))
         group_mommy.feedbackset_new_attempt_published(
                 group=group,
-                is_last_in_group=None,
                 created_datetime=now - timezone.timedelta(days=15),
                 deadline_datetime=now-timezone.timedelta(days=14),
                 grading_published_datetime=now-timezone.timedelta(days=13))
@@ -77,12 +75,10 @@ class TestFeedbackFeedTimelineBuilder(TestCase, object):
         now = timezone.now()
         group_mommy.feedbackset_first_attempt_published(
                 group=group,
-                is_last_in_group=None,
                 grading_published_datetime=now-timezone.timedelta(days=10))
         feedbackset_last = group_mommy.feedbackset_new_attempt_published(
                 group=group,
                 deadline_datetime=now-timezone.timedelta(days=9),
-                # is_last_in_group=None,
                 grading_published_datetime=now-timezone.timedelta(days=8))
         timelinebuilder = FeedbackFeedTimelineBuilder(group=group, requestuser=testuser, devilryrole='unused')
         timelinebuilder.build()
@@ -95,12 +91,10 @@ class TestFeedbackFeedTimelineBuilder(TestCase, object):
         now = timezone.now()
         group_mommy.feedbackset_first_attempt_published(
                 group=group,
-                is_last_in_group=None,
                 grading_published_datetime=now-timezone.timedelta(days=10))
         feedbackset_last = group_mommy.feedbackset_new_attempt_published(
                 group=group,
                 deadline_datetime=now-timezone.timedelta(days=9),
-                # is_last_in_group=None,
                 grading_published_datetime=now-timezone.timedelta(days=8))
         timelinebuilder = FeedbackFeedTimelineBuilder(group=group, requestuser=testuser, devilryrole='unused')
         timelinebuilder.build()
@@ -155,7 +149,7 @@ class TestFeedbackFeedTimelineBuilder(TestCase, object):
                 requestuser=examiner.relatedexaminer.user,
                 devilryrole='examiner')
         timelinebuilder_examiner.build()
-        self.assertEquals(6, len(timelinebuilder_examiner.feedbacksets[0].groupcomment_set.all()))
+        self.assertEquals(6, len(timelinebuilder_examiner.feedbacksets[1].groupcomment_set.all()))
         self.assertEquals(7, len(timelinebuilder_examiner.timeline))
 
         # examiner2 can see all comments, except private comments
@@ -164,7 +158,7 @@ class TestFeedbackFeedTimelineBuilder(TestCase, object):
                 requestuser=examiner2.relatedexaminer.user,
                 devilryrole='examiner')
         timelinebuilder_examiner2.build()
-        self.assertEquals(5, len(timelinebuilder_examiner2.feedbacksets[0].groupcomment_set.all()))
+        self.assertEquals(5, len(timelinebuilder_examiner2.feedbacksets[1].groupcomment_set.all()))
         self.assertEquals(6, len(timelinebuilder_examiner2.timeline))
 
         # student can only see what is visible to everyone(VISIBILITY_VISIBLE_TO_EVERYONE)
@@ -174,7 +168,7 @@ class TestFeedbackFeedTimelineBuilder(TestCase, object):
             devilryrole='student'
         )
         timelinebuilder_student.build()
-        self.assertEquals(3, len(timelinebuilder_student.feedbacksets[0].groupcomment_set.all()))
+        self.assertEquals(3, len(timelinebuilder_student.feedbacksets[1].groupcomment_set.all()))
         self.assertEquals(4, len(timelinebuilder_student.timeline))
 
     def test_get_one_group(self):
@@ -197,8 +191,8 @@ class TestFeedbackFeedTimelineBuilder(TestCase, object):
             requestuser=relatedstudent.user,
             devilryrole='student'
         )
-        self.assertEquals(1, len(timelinebuilder.feedbacksets))
-        self.assertEquals(feedbackset, timelinebuilder.feedbacksets[0])
+        self.assertEquals(2, len(timelinebuilder.feedbacksets))
+        self.assertEquals(feedbackset, timelinebuilder.feedbacksets[1])
 
     def test_complete_example(self):
         testuser = mommy.make(settings.AUTH_USER_MODEL)
@@ -219,7 +213,6 @@ class TestFeedbackFeedTimelineBuilder(TestCase, object):
                 grading_points=10,
                 created_by=examiner.relatedexaminer.user,
                 created_datetime=testassignment.publishing_time,
-                is_last_in_group=None,
                 group=testgroup,
                 grading_published_by=examiner.relatedexaminer.user)
         mommy.make('devilry_group.GroupComment',
@@ -270,10 +263,11 @@ class TestFeedbackFeedTimelineBuilder(TestCase, object):
 
         self.assertEquals(builder_list[0]['type'], 'comment')
         self.assertEquals(builder_list[1]['type'], 'deadline_expired')
-        self.assertEquals(builder_list[2]['type'], 'comment')
-        self.assertEquals(builder_list[3]['type'], 'grade')
-        self.assertEquals(builder_list[4]['type'], 'deadline_created')
-        self.assertEquals(builder_list[5]['type'], 'comment')
-        self.assertEquals(builder_list[6]['type'], 'deadline_expired')
-        self.assertEquals(builder_list[7]['type'], 'comment')
-        self.assertEquals(builder_list[8]['type'], 'grade')
+        self.assertEquals(builder_list[2]['type'], 'deadline_expired')
+        self.assertEquals(builder_list[3]['type'], 'comment')
+        self.assertEquals(builder_list[4]['type'], 'grade')
+        self.assertEquals(builder_list[5]['type'], 'deadline_created')
+        self.assertEquals(builder_list[6]['type'], 'comment')
+        self.assertEquals(builder_list[7]['type'], 'deadline_expired')
+        self.assertEquals(builder_list[8]['type'], 'comment')
+        self.assertEquals(builder_list[9]['type'], 'grade')

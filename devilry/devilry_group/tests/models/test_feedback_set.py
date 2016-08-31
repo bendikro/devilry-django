@@ -17,9 +17,10 @@ class TestFeedbackSetModel(TestCase):
                                  group=testgroup)
         self.assertEquals(feedbackset.group, testgroup)
 
-    def test_feedbackset_is_last_in_group_default_true(self):
-        feedbackset = mommy.make('devilry_group.FeedbackSet')
-        self.assertTrue(feedbackset.is_last_in_group)
+    # Add test for the is_last_in_group from cached data?
+    #def test_feedbackset_is_last_in_group_default_true(self):
+    #    feedbackset = mommy.make('devilry_group.FeedbackSet')
+    #    self.assertTrue(feedbackset.is_last_in_group)
 
     def test_feedbackset_feedbackset_type_default_first_try(self):
         feedbackset = mommy.make('devilry_group.FeedbackSet')
@@ -154,13 +155,6 @@ class TestFeedbackSetModel(TestCase):
         with self.assertRaisesMessage(ValidationError,
                                       'An assignment can not be published without providing "points".'):
             result, msg = test_feedbackset.publish(published_by=testuser, grading_points=None)
-
-    def test_feedbackset_clean_is_last_in_group_false(self):
-        feedbackset = mommy.prepare('devilry_group.FeedbackSet',
-                                    is_last_in_group=False)
-        with self.assertRaisesMessage(ValidationError,
-                                      'is_last_in_group can not be false.'):
-            feedbackset.clean()
 
     def test_clean_published_by_is_none(self):
         testfeedbackset = mommy.prepare('devilry_group.FeedbackSet',

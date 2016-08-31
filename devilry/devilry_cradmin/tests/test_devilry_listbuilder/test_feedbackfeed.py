@@ -7,6 +7,7 @@ from django.utils import timezone
 from devilry.devilry_cradmin.devilry_listbuilder import feedbackfeed as listbuilder
 from devilry.devilry_group.timeline_builder import feedbackfeed_timeline_builder
 from devilry.apps.core import models as core_models
+from devilry.devilry_dbcache.customsql import AssignmentGroupDbCacheCustomSql
 from devilry.devilry_group import devilry_group_mommy_factories as group_mommy
 
 
@@ -14,6 +15,10 @@ class TestListBuilderListItems(test.TestCase):
     """
     Testing the listbuilder and the items it holds.
     """
+
+    def setUp(self):
+        AssignmentGroupDbCacheCustomSql().initialize()
+
     def test_listbuilder_list_items_complete_example(self):
         """
         Test a complete example of the listbuilder with all events.
@@ -34,7 +39,6 @@ class TestListBuilderListItems(test.TestCase):
                 grading_points=10,
                 created_by=examiner.relatedexaminer.user,
                 created_datetime=(testassignment.publishing_time),
-                is_last_in_group=None,
                 group=testgroup,
                 grading_published_by=examiner.relatedexaminer.user)
         mommy.make('devilry_group.GroupComment',
@@ -89,13 +93,14 @@ class TestListBuilderListItems(test.TestCase):
 
         self.assertTrue(isinstance(listbuilder_list.renderable_list[0], listbuilder.StudentGroupCommentItemValue))
         self.assertTrue(isinstance(listbuilder_list.renderable_list[1], listbuilder.DeadlineExpiredItemValue))
-        self.assertTrue(isinstance(listbuilder_list.renderable_list[2], listbuilder.ExaminerGroupCommentItemValue))
-        self.assertTrue(isinstance(listbuilder_list.renderable_list[3], listbuilder.GradeItemValue))
-        self.assertTrue(isinstance(listbuilder_list.renderable_list[4], listbuilder.DeadlineCreatedItemValue))
-        self.assertTrue(isinstance(listbuilder_list.renderable_list[5], listbuilder.StudentGroupCommentItemValue))
-        self.assertTrue(isinstance(listbuilder_list.renderable_list[6], listbuilder.DeadlineExpiredItemValue))
-        self.assertTrue(isinstance(listbuilder_list.renderable_list[7], listbuilder.ExaminerGroupCommentItemValue))
-        self.assertTrue(isinstance(listbuilder_list.renderable_list[8], listbuilder.GradeItemValue))
+        self.assertTrue(isinstance(listbuilder_list.renderable_list[2], listbuilder.DeadlineExpiredItemValue))
+        self.assertTrue(isinstance(listbuilder_list.renderable_list[3], listbuilder.ExaminerGroupCommentItemValue))
+        self.assertTrue(isinstance(listbuilder_list.renderable_list[4], listbuilder.GradeItemValue))
+        self.assertTrue(isinstance(listbuilder_list.renderable_list[5], listbuilder.DeadlineCreatedItemValue))
+        self.assertTrue(isinstance(listbuilder_list.renderable_list[6], listbuilder.StudentGroupCommentItemValue))
+        self.assertTrue(isinstance(listbuilder_list.renderable_list[7], listbuilder.DeadlineExpiredItemValue))
+        self.assertTrue(isinstance(listbuilder_list.renderable_list[8], listbuilder.ExaminerGroupCommentItemValue))
+        self.assertTrue(isinstance(listbuilder_list.renderable_list[9], listbuilder.GradeItemValue))
 
 
 class TestGroupCommentItemValueStudentViewrole(test.TestCase):

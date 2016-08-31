@@ -138,6 +138,9 @@ class GroupListView(listbuilderview.FilterListMixin,
         return status_value
 
     def __get_unfiltered_queryset_for_role(self):
+        #print "__get_unfiltered_queryset_for_role"
+        import traceback
+        #traceback.print_stack(limit=2)
         return self.get_unfiltered_queryset_for_role(role=self.request.cradmin_role)
 
     def __get_total_groupcount(self):
@@ -166,6 +169,12 @@ class GroupListView(listbuilderview.FilterListMixin,
             .count()
 
     def get_filtered_waiting_for_deliveries_count(self):
+        print "get_filtered_waiting_for_deliveries_count:",  self.get_filterlist()\
+            .filter(queryobject=self.__get_unfiltered_queryset_for_role(),
+                    exclude={'status'})\
+            .filter(is_waiting_for_deliveries=True)\
+            .count()
+
         return self.get_filterlist()\
             .filter(queryobject=self.__get_unfiltered_queryset_for_role(),
                     exclude={'status'})\
@@ -180,6 +189,7 @@ class GroupListView(listbuilderview.FilterListMixin,
             .count()
 
     def __get_distinct_relatedexaminer_ids(self):
+        #print "__get_distinct_relatedexaminer_ids"
         if not hasattr(self, '_distinct_relatedexaminer_ids'):
             self._distinct_relatedexaminer_ids = Examiner.objects\
                 .filter(assignmentgroup__in=self.__get_unfiltered_queryset_for_role())\
@@ -192,6 +202,7 @@ class GroupListView(listbuilderview.FilterListMixin,
         return len(self.__get_distinct_relatedexaminer_ids()) > 1
 
     def get_distinct_relatedexaminers(self):
+        #print "get_distinct_relatedexaminers"
         return RelatedExaminer.objects\
             .filter(id__in=self.__get_distinct_relatedexaminer_ids())\
             .select_related('user')\

@@ -1266,7 +1266,6 @@ class TestDevilryCommentSummary(test.TestCase):
         testgroup = mommy.make('core.AssignmentGroup')
         mommy.make('devilry_group.GroupComment',
                    feedback_set__group=testgroup,
-                   feedback_set__is_last_in_group=False,
                    comment_type=GroupComment.COMMENT_TYPE_GROUPCOMMENT,
                    visibility=GroupComment.VISIBILITY_VISIBLE_TO_EVERYONE,
                    user_role=Comment.USER_ROLE_STUDENT)
@@ -1317,7 +1316,6 @@ class TestDevilryCommentSummary(test.TestCase):
         testgroup = mommy.make('core.AssignmentGroup')
         testcomment1 = mommy.make('devilry_group.GroupComment',
                                   feedback_set__group=testgroup,
-                                  feedback_set__is_last_in_group=False,
                                   visibility=GroupComment.VISIBILITY_VISIBLE_TO_EVERYONE,
                                   comment_type=GroupComment.COMMENT_TYPE_GROUPCOMMENT,
                                   user_role=Comment.USER_ROLE_STUDENT)
@@ -1368,7 +1366,6 @@ class TestDevilryCommentSummary(test.TestCase):
         testgroup = mommy.make('core.AssignmentGroup')
         mommy.make('devilry_group.GroupComment',
                    feedback_set__group=testgroup,
-                   feedback_set__is_last_in_group=False,
                    comment_type=GroupComment.COMMENT_TYPE_GROUPCOMMENT,
                    visibility=GroupComment.VISIBILITY_VISIBLE_TO_EVERYONE,
                    user_role=Comment.USER_ROLE_EXAMINER)
@@ -1421,7 +1418,6 @@ class TestDevilryCommentSummary(test.TestCase):
         mommy.make('devilry_group.GroupComment',
                    feedback_set__group=testgroup,
                    user=testuser,
-                   feedback_set__is_last_in_group=False,
                    visibility=GroupComment.VISIBILITY_PRIVATE,
                    user_role=Comment.USER_ROLE_EXAMINER)
         mommy.make('devilry_group.GroupComment',

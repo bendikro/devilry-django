@@ -46,6 +46,10 @@ class TestFullyAnonymousSubjectAdminItemValue(test.TestCase):
 
 
 class TestStudentItemValue(test.TestCase):
+
+    def setUp(self):
+        AssignmentGroupDbCacheCustomSql().initialize()
+
     def test_title_default(self):
         testgroup = mommy.make('core.AssignmentGroup',
                                parentnode__parentnode__parentnode__short_name='testsubject',
@@ -120,6 +124,10 @@ class TestStudentItemValue(test.TestCase):
 
 
 class TestExaminerItemValue(test.TestCase):
+
+    def setUp(self):
+        AssignmentGroupDbCacheCustomSql().initialize()
+
     def test_name(self):
         testgroup = mommy.make('core.AssignmentGroup')
         mommy.make('core.Candidate',
@@ -255,6 +263,10 @@ class TestExaminerItemValue(test.TestCase):
 
 
 class TestPeriodAdminItemValue(test.TestCase):
+
+    def setUp(self):
+        AssignmentGroupDbCacheCustomSql().initialize()
+
     def test_name(self):
         testgroup = mommy.make('core.AssignmentGroup')
         mommy.make('core.Candidate',
@@ -315,6 +327,10 @@ class TestPeriodAdminItemValue(test.TestCase):
 
 
 class TestSubjectAdminItemValue(test.TestCase):
+
+    def setUp(self):
+        AssignmentGroupDbCacheCustomSql().initialize()
+
     def test_name(self):
         testgroup = mommy.make('core.AssignmentGroup')
         mommy.make('core.Candidate',
@@ -401,6 +417,10 @@ class TestSubjectAdminItemValue(test.TestCase):
 
 
 class TestDepartmentAdminItemValue(test.TestCase):
+
+    def setUp(self):
+        AssignmentGroupDbCacheCustomSql().initialize()
+
     def test_name(self):
         testgroup = mommy.make('core.AssignmentGroup')
         mommy.make('core.Candidate',
@@ -549,7 +569,6 @@ class TestItemValue(test.TestCase):
         self.assertFalse(selector.exists('.devilry-cradmin-groupitemvalue-grade'))
 
     def test_grade_comment_summary_is_available(self):
-        AssignmentGroupDbCacheCustomSql().initialize()
         mommy.make('core.AssignmentGroup')
         testgroup = AssignmentGroup.objects\
             .annotate_with_number_of_commentfiles_from_students()\
@@ -952,6 +971,10 @@ class TestPeriodAdminMultiselectItemValue(test.TestCase):
 
 
 class TestSubjectAdminMultiselectItemValue(test.TestCase):
+
+    def setUp(self):
+        AssignmentGroupDbCacheCustomSql().initialize()
+
     def test_fully_anonymous_is_not_allowed(self):
         testgroup = mommy.make('core.AssignmentGroup',
                                parentnode__anonymizationmode=Assignment.ANONYMIZATIONMODE_FULLY_ANONYMOUS)
@@ -1102,6 +1125,10 @@ class TestSubjectAdminMultiselectItemValue(test.TestCase):
 
 
 class TestDepartmentAdminMultiselectItemValue(test.TestCase):
+
+    def setUp(self):
+        AssignmentGroupDbCacheCustomSql().initialize()
+
     def test_name(self):
         testgroup = mommy.make('core.AssignmentGroup')
         mommy.make('core.Candidate',
@@ -1294,7 +1321,6 @@ class TestMultiselectItemValue(test.TestCase):
         self.assertFalse(selector.exists('.devilry-cradmin-groupitemvalue-grade'))
 
     def test_grade_comment_summary_is_available(self):
-        AssignmentGroupDbCacheCustomSql().initialize()
         mommy.make('core.AssignmentGroup')
         testgroup = AssignmentGroup.objects\
             .annotate_with_number_of_commentfiles_from_students()\

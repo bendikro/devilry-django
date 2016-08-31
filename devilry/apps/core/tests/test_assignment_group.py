@@ -186,7 +186,6 @@ class TestAssignmentGroup(TestCase):
         mommy.make('devilry_group.FeedbackSet',
                    group=testgroup,
                    grading_published_datetime=timezone.now(),  # -> published=True
-                   is_last_in_group=None,
                    grading_points=1)
 
         self.assertTrue(testgroup.last_feedbackset_is_published)
@@ -598,7 +597,6 @@ class TestAssignmentGroup(TestCase):
                                     passing_grade_min_points=1)
         passingfeedbackset = mommy.make('devilry_group.FeedbackSet',
                                         grading_published_datetime=timezone.now(),
-                                        is_last_in_group=None,
                                         group__parentnode=testassignment,
                                         grading_points=1)
         mommy.make('devilry_group.FeedbackSet',
@@ -626,7 +624,6 @@ class TestAssignmentGroup(TestCase):
         testgroup = mommy.make('core.AssignmentGroup', parentnode=testassignment)
         mommy.make('devilry_group.FeedbackSet',
                    group=testgroup,
-                   is_last_in_group=None,
                    grading_published_datetime=timezone.now() - timedelta(days=2),
                    grading_points=1)
         mommy.make('devilry_group.FeedbackSet',
@@ -644,17 +641,14 @@ class TestAssignmentGroup(TestCase):
         mommy.make('devilry_group.FeedbackSet',
                    grading_published_datetime=timezone.now() - timedelta(days=2),
                    group=testgroup,
-                   is_last_in_group=None,
                    grading_points=0)
         mommy.make('devilry_group.FeedbackSet',
                    grading_published_datetime=timezone.now(),
                    group=testgroup,
-                   is_last_in_group=None,
                    grading_points=1)
         mommy.make('devilry_group.FeedbackSet',
                    grading_published_datetime=timezone.now() - timedelta(days=3),
                    group=testgroup,
-                   is_last_in_group=None,
                    grading_points=0)
         self.assertEqual(
             [testgroup],
@@ -667,12 +661,10 @@ class TestAssignmentGroup(TestCase):
         mommy.make('devilry_group.FeedbackSet',
                    grading_published_datetime=timezone.now() - timedelta(days=2),
                    group=testgroup,
-                   is_last_in_group=None,
                    grading_points=1)
         mommy.make('devilry_group.FeedbackSet',
                    grading_published_datetime=timezone.now(),
                    group=testgroup,
-                   is_last_in_group=None,
                    grading_points=0)
         mommy.make('devilry_group.FeedbackSet',
                    grading_published_datetime=timezone.now() - timedelta(days=3),
@@ -1815,13 +1807,17 @@ class TestAssignmentGroupQuerySetExtraOrdering(TestCase):
 
 
 class TestAssignmentGroupQuerySetAnnotateWithIsWaitingForFeedback(TestCase):
+
+    def setUp(self):
+        AssignmentGroupDbCacheCustomSql().initialize()
+
     def test_annotate_with_is_waiting_for_feedback_false_feedback_published(self):
         testgroup = mommy.make('core.AssignmentGroup')
         mommy.make('devilry_group.FeedbackSet',
                    group=testgroup,
                    grading_published_datetime=timezone.now() - timedelta(days=1),
                    deadline_datetime=timezone.now() - timedelta(days=2),
-                   is_last_in_group=True)
+                   )
         queryset = AssignmentGroup.objects.all().annotate_with_is_waiting_for_feedback()
         self.assertFalse(queryset.first().is_waiting_for_feedback)
 
@@ -1832,7 +1828,7 @@ class TestAssignmentGroupQuerySetAnnotateWithIsWaitingForFeedback(TestCase):
                    grading_published_datetime=None,
                    deadline_datetime=timezone.now() + timedelta(days=2),
                    feedbackset_type=FeedbackSet.FEEDBACKSET_TYPE_NEW_ATTEMPT,
-                   is_last_in_group=True)
+                   )
         queryset = AssignmentGroup.objects.all().annotate_with_is_waiting_for_feedback()
         self.assertFalse(queryset.first().is_waiting_for_feedback)
 
@@ -1843,7 +1839,7 @@ class TestAssignmentGroupQuerySetAnnotateWithIsWaitingForFeedback(TestCase):
                    group=testgroup,
                    grading_published_datetime=None,
                    feedbackset_type=FeedbackSet.FEEDBACKSET_TYPE_FIRST_ATTEMPT,
-                   is_last_in_group=True)
+                   )
         queryset = AssignmentGroup.objects.all().annotate_with_is_waiting_for_feedback()
         self.assertFalse(queryset.first().is_waiting_for_feedback)
 
@@ -1854,7 +1850,7 @@ class TestAssignmentGroupQuerySetAnnotateWithIsWaitingForFeedback(TestCase):
                    grading_published_datetime=None,
                    deadline_datetime=timezone.now() - timedelta(days=1),
                    feedbackset_type=FeedbackSet.FEEDBACKSET_TYPE_NEW_ATTEMPT,
-                   is_last_in_group=True)
+                   )
         queryset = AssignmentGroup.objects.all().annotate_with_is_waiting_for_feedback()
         self.assertTrue(queryset.first().is_waiting_for_feedback)
 
@@ -1864,7 +1860,7 @@ class TestAssignmentGroupQuerySetAnnotateWithIsWaitingForFeedback(TestCase):
         mommy.make('devilry_group.FeedbackSet',
                    group=testgroup,
                    grading_published_datetime=None,
-                   is_last_in_group=True)
+                   )
         queryset = AssignmentGroup.objects.all().annotate_with_is_waiting_for_feedback()
         self.assertTrue(queryset.first().is_waiting_for_feedback)
 
@@ -1875,25 +1871,29 @@ class TestAssignmentGroupQuerySetAnnotateWithIsWaitingForFeedback(TestCase):
                    group=testgroup,
                    grading_published_datetime=timezone.now() - timedelta(days=1),
                    feedbackset_type=FeedbackSet.FEEDBACKSET_TYPE_FIRST_ATTEMPT,
-                   is_last_in_group=None)
+                   )
         mommy.make('devilry_group.FeedbackSet',
                    group=testgroup,
                    grading_published_datetime=None,
                    deadline_datetime=timezone.now() - timedelta(days=1),
                    feedbackset_type=FeedbackSet.FEEDBACKSET_TYPE_NEW_ATTEMPT,
-                   is_last_in_group=True)
+                   )
         queryset = AssignmentGroup.objects.all().annotate_with_is_waiting_for_feedback()
         self.assertTrue(queryset.first().is_waiting_for_feedback)
 
 
 class TestAssignmentGroupQuerySetAnnotateWithIsWaitingForDeliveries(TestCase):
+
+    def setUp(self):
+        AssignmentGroupDbCacheCustomSql().initialize()
+
     def test_annotate_with_is_waiting_for_deliveries_false_feedback_published(self):
         testgroup = mommy.make('core.AssignmentGroup')
         mommy.make('devilry_group.FeedbackSet',
                    group=testgroup,
                    grading_published_datetime=timezone.now() - timedelta(days=1),
                    deadline_datetime=timezone.now() - timedelta(days=2),
-                   is_last_in_group=True)
+                   )
         queryset = AssignmentGroup.objects.all().annotate_with_is_waiting_for_deliveries()
         self.assertFalse(queryset.first().is_waiting_for_deliveries)
 
@@ -1904,7 +1904,7 @@ class TestAssignmentGroupQuerySetAnnotateWithIsWaitingForDeliveries(TestCase):
                    grading_published_datetime=None,
                    deadline_datetime=timezone.now() - timedelta(days=2),
                    feedbackset_type=FeedbackSet.FEEDBACKSET_TYPE_NEW_ATTEMPT,
-                   is_last_in_group=True)
+                   )
         queryset = AssignmentGroup.objects.all().annotate_with_is_waiting_for_deliveries()
         self.assertFalse(queryset.first().is_waiting_for_deliveries)
 
@@ -1915,7 +1915,7 @@ class TestAssignmentGroupQuerySetAnnotateWithIsWaitingForDeliveries(TestCase):
                    group=testgroup,
                    grading_published_datetime=None,
                    feedbackset_type=FeedbackSet.FEEDBACKSET_TYPE_FIRST_ATTEMPT,
-                   is_last_in_group=True)
+                   )
         queryset = AssignmentGroup.objects.all().annotate_with_is_waiting_for_deliveries()
         self.assertFalse(queryset.first().is_waiting_for_deliveries)
 
@@ -1926,7 +1926,7 @@ class TestAssignmentGroupQuerySetAnnotateWithIsWaitingForDeliveries(TestCase):
                    grading_published_datetime=None,
                    deadline_datetime=timezone.now() + timedelta(days=1),
                    feedbackset_type=FeedbackSet.FEEDBACKSET_TYPE_NEW_ATTEMPT,
-                   is_last_in_group=True)
+                   )
         queryset = AssignmentGroup.objects.all().annotate_with_is_waiting_for_deliveries()
         self.assertTrue(queryset.first().is_waiting_for_deliveries)
 
@@ -1936,7 +1936,7 @@ class TestAssignmentGroupQuerySetAnnotateWithIsWaitingForDeliveries(TestCase):
         mommy.make('devilry_group.FeedbackSet',
                    group=testgroup,
                    grading_published_datetime=None,
-                   is_last_in_group=True)
+                   )
         queryset = AssignmentGroup.objects.all().annotate_with_is_waiting_for_deliveries()
         self.assertTrue(queryset.first().is_waiting_for_deliveries)
 
@@ -1947,24 +1947,28 @@ class TestAssignmentGroupQuerySetAnnotateWithIsWaitingForDeliveries(TestCase):
                    group=testgroup,
                    grading_published_datetime=timezone.now() - timedelta(days=1),
                    feedbackset_type=FeedbackSet.FEEDBACKSET_TYPE_FIRST_ATTEMPT,
-                   is_last_in_group=None)
+                   )
         mommy.make('devilry_group.FeedbackSet',
                    group=testgroup,
                    grading_published_datetime=None,
                    deadline_datetime=timezone.now() + timedelta(days=1),
                    feedbackset_type=FeedbackSet.FEEDBACKSET_TYPE_NEW_ATTEMPT,
-                   is_last_in_group=True)
+                   )
         queryset = AssignmentGroup.objects.all().annotate_with_is_waiting_for_deliveries()
         self.assertTrue(queryset.first().is_waiting_for_deliveries)
 
 
 class TestAssignmentGroupQuerySetAnnotateWithIsCorrected(TestCase):
+
+    def setUp(self):
+        AssignmentGroupDbCacheCustomSql().initialize()
+
     def test_annotate_with_is_corrected_false_feedback_not_published(self):
         testgroup = mommy.make('core.AssignmentGroup')
         mommy.make('devilry_group.FeedbackSet',
                    group=testgroup,
                    grading_published_datetime=None,
-                   is_last_in_group=True)
+                   )
         queryset = AssignmentGroup.objects.all().annotate_with_is_corrected()
         self.assertFalse(queryset.first().is_corrected)
 
@@ -1973,7 +1977,7 @@ class TestAssignmentGroupQuerySetAnnotateWithIsCorrected(TestCase):
         mommy.make('devilry_group.FeedbackSet',
                    group=testgroup,
                    grading_published_datetime=timezone.now(),
-                   is_last_in_group=True)
+                   )
         queryset = AssignmentGroup.objects.all().annotate_with_is_corrected()
         self.assertTrue(queryset.first().is_corrected)
 
@@ -1983,12 +1987,12 @@ class TestAssignmentGroupQuerySetAnnotateWithIsCorrected(TestCase):
                    group=testgroup,
                    grading_published_datetime=timezone.now() - timedelta(days=3),
                    feedbackset_type=FeedbackSet.FEEDBACKSET_TYPE_FIRST_ATTEMPT,
-                   is_last_in_group=None)
+                   )
         mommy.make('devilry_group.FeedbackSet',
                    group=testgroup,
                    grading_published_datetime=None,
                    feedbackset_type=FeedbackSet.FEEDBACKSET_TYPE_NEW_ATTEMPT,
-                   is_last_in_group=True)
+                   )
         queryset = AssignmentGroup.objects.all().annotate_with_is_corrected()
         self.assertFalse(queryset.first().is_corrected)
 
@@ -1998,17 +2002,21 @@ class TestAssignmentGroupQuerySetAnnotateWithIsCorrected(TestCase):
                    group=testgroup,
                    grading_published_datetime=timezone.now() - timedelta(days=2),
                    feedbackset_type=FeedbackSet.FEEDBACKSET_TYPE_FIRST_ATTEMPT,
-                   is_last_in_group=None)
+                   )
         mommy.make('devilry_group.FeedbackSet',
                    group=testgroup,
                    grading_published_datetime=timezone.now() - timedelta(days=1),
                    feedbackset_type=FeedbackSet.FEEDBACKSET_TYPE_NEW_ATTEMPT,
-                   is_last_in_group=True)
+                   )
         queryset = AssignmentGroup.objects.all().annotate_with_is_corrected()
         self.assertTrue(queryset.first().is_corrected)
 
 
 class TestAssignmentGroupQuerySetAnnotateWithGradingPoints(TestCase):
+
+    def setUp(self):
+        AssignmentGroupDbCacheCustomSql().initialize()
+
     def test_annotate_with_grading_points_not_published_is_still_counted(self):
         testgroup = mommy.make('core.AssignmentGroup')
         devilry_group_mommy_factories.feedbackset_first_attempt_unpublished(
@@ -2038,11 +2046,11 @@ class TestAssignmentGroupQuerySetAnnotateWithGradingPoints(TestCase):
         devilry_group_mommy_factories.feedbackset_first_attempt_published(
             group=testgroup,
             grading_points=10,
-            is_last_in_group=False)
+            )
         devilry_group_mommy_factories.feedbackset_new_attempt_published(
             group=testgroup,
             grading_points=20,
-            is_last_in_group=True)
+            )
         queryset = AssignmentGroup.objects.all().annotate_with_grading_points()
         self.assertEqual(20, queryset.first().grading_points)
 
@@ -2051,11 +2059,11 @@ class TestAssignmentGroupQuerySetAnnotateWithGradingPoints(TestCase):
         devilry_group_mommy_factories.feedbackset_first_attempt_published(
             group=testgroup,
             grading_points=10,
-            is_last_in_group=False)
+            )
         devilry_group_mommy_factories.feedbackset_new_attempt_unpublished(
             group=testgroup,
             grading_points=20,
-            is_last_in_group=True)
+            )
         queryset = AssignmentGroup.objects.all().annotate_with_grading_points()
         self.assertEqual(20, queryset.first().grading_points)
 
@@ -2098,6 +2106,10 @@ class TestAssignmentGroupQuerySetAnnotateWithGradingPoints(TestCase):
 
 
 class TestAssignmentGroupQuerySetAnnotateWithIsPassingGrade(TestCase):
+
+    def setUp(self):
+        AssignmentGroupDbCacheCustomSql().initialize()
+
     def test_annotate_with_is_passing_grade_false_unpublished(self):
         testgroup = mommy.make('core.AssignmentGroup')
         devilry_group_mommy_factories.feedbackset_first_attempt_unpublished(
@@ -2139,11 +2151,11 @@ class TestAssignmentGroupQuerySetAnnotateWithIsPassingGrade(TestCase):
         devilry_group_mommy_factories.feedbackset_first_attempt_published(
             group=testgroup,
             grading_points=5,
-            is_last_in_group=False)
+            )
         devilry_group_mommy_factories.feedbackset_new_attempt_published(
             group=testgroup,
             grading_points=15,
-            is_last_in_group=True)
+            )
         queryset = AssignmentGroup.objects.all().annotate_with_is_passing_grade()
         self.assertTrue(queryset.first().is_passing_grade)
 
@@ -2153,11 +2165,11 @@ class TestAssignmentGroupQuerySetAnnotateWithIsPassingGrade(TestCase):
         devilry_group_mommy_factories.feedbackset_first_attempt_published(
             group=testgroup,
             grading_points=5,
-            is_last_in_group=False)
+            )
         devilry_group_mommy_factories.feedbackset_new_attempt_unpublished(
             group=testgroup,
             grading_points=20,
-            is_last_in_group=True)
+            )
         queryset = AssignmentGroup.objects.all().annotate_with_is_passing_grade()
         self.assertFalse(queryset.first().is_passing_grade)
 
@@ -2234,13 +2246,11 @@ class TestAssignmentGroupQuerySetExtraAnnotateWithDatetimeOfLastStudentComment(T
                    feedback_set__group=testgroup,
                    visibility=GroupComment.VISIBILITY_VISIBLE_TO_EVERYONE,
                    user_role=Comment.USER_ROLE_STUDENT,
-                   feedback_set__is_last_in_group=None,
                    published_datetime=datetime(2010, 12, 24, 0, 0))
         mommy.make('devilry_group.GroupComment',
                    feedback_set__group=testgroup,
                    visibility=GroupComment.VISIBILITY_VISIBLE_TO_EVERYONE,
                    user_role=Comment.USER_ROLE_STUDENT,
-                   feedback_set__is_last_in_group=None,
                    published_datetime=datetime(2009, 12, 24, 0, 0))
         mommy.make('devilry_group.GroupComment',
                    feedback_set__group=testgroup,
@@ -2343,13 +2353,11 @@ class TestAssignmentGroupQuerySetExtraAnnotateWithDatetimeOfLastExaminerComment(
                    feedback_set__group=testgroup,
                    visibility=GroupComment.VISIBILITY_VISIBLE_TO_EVERYONE,
                    user_role=Comment.USER_ROLE_EXAMINER,
-                   feedback_set__is_last_in_group=None,
                    published_datetime=datetime(2010, 12, 24, 0, 0))
         mommy.make('devilry_group.GroupComment',
                    feedback_set__group=testgroup,
                    visibility=GroupComment.VISIBILITY_VISIBLE_TO_EVERYONE,
                    user_role=Comment.USER_ROLE_EXAMINER,
-                   feedback_set__is_last_in_group=None,
                    published_datetime=datetime(2009, 12, 24, 0, 0))
         mommy.make('devilry_group.GroupComment',
                    feedback_set__group=testgroup,
@@ -2452,13 +2460,11 @@ class TestAssignmentGroupQuerySetExtraAnnotateWithDatetimeOfLastAdminComment(Tes
                    feedback_set__group=testgroup,
                    visibility=GroupComment.VISIBILITY_VISIBLE_TO_EVERYONE,
                    user_role=Comment.USER_ROLE_ADMIN,
-                   feedback_set__is_last_in_group=None,
                    published_datetime=datetime(2010, 12, 24, 0, 0))
         mommy.make('devilry_group.GroupComment',
                    feedback_set__group=testgroup,
                    visibility=GroupComment.VISIBILITY_VISIBLE_TO_EVERYONE,
                    user_role=Comment.USER_ROLE_ADMIN,
-                   feedback_set__is_last_in_group=None,
                    published_datetime=datetime(2009, 12, 24, 0, 0))
         mommy.make('devilry_group.GroupComment',
                    feedback_set__group=testgroup,
@@ -2713,11 +2719,10 @@ class TestAssignmentGroupQuerySetAnnotateWithNumberOfGroupcomments(TestCase):
     def test_annotate_with_number_of_groupcomments_multiple_comments(self):
         testgroup = mommy.make('core.AssignmentGroup')
         feedbackset1 = devilry_group_mommy_factories.feedbackset_first_attempt_published(
-            group=testgroup,
-            is_last_in_group=False)
+            group=testgroup)
         feedbackset2 = devilry_group_mommy_factories.feedbackset_new_attempt_unpublished(
             group=testgroup,
-            is_last_in_group=True)
+            )
         mommy.make('devilry_group.GroupComment',
                    feedback_set=feedbackset1,
                    comment_type=GroupComment.COMMENT_TYPE_GROUPCOMMENT,
@@ -2820,11 +2825,10 @@ class TestAssignmentGroupQuerySetAnnotateWithNumberOfGroupcommentsFromStudents(T
     def test_annotate_with_number_of_groupcomments_from_students_multiple_comments(self):
         testgroup = mommy.make('core.AssignmentGroup')
         feedbackset1 = devilry_group_mommy_factories.feedbackset_first_attempt_published(
-            group=testgroup,
-            is_last_in_group=False)
+            group=testgroup)
         feedbackset2 = devilry_group_mommy_factories.feedbackset_new_attempt_unpublished(
             group=testgroup,
-            is_last_in_group=True)
+            )
         mommy.make('devilry_group.GroupComment',
                    feedback_set=feedbackset1,
                    comment_type=GroupComment.COMMENT_TYPE_GROUPCOMMENT,
@@ -2933,11 +2937,10 @@ class TestAssignmentGroupQuerySetAnnotateWithNumberOfGroupcommentsFromExaminers(
     def test_annotate_with_number_of_groupcomments_from_examiners_multiple_comments(self):
         testgroup = mommy.make('core.AssignmentGroup')
         feedbackset1 = devilry_group_mommy_factories.feedbackset_first_attempt_published(
-            group=testgroup,
-            is_last_in_group=False)
+            group=testgroup)
         feedbackset2 = devilry_group_mommy_factories.feedbackset_new_attempt_unpublished(
             group=testgroup,
-            is_last_in_group=True)
+            )
         mommy.make('devilry_group.GroupComment',
                    feedback_set=feedbackset1,
                    comment_type=GroupComment.COMMENT_TYPE_GROUPCOMMENT,
@@ -3046,11 +3049,10 @@ class TestAssignmentGroupQuerySetAnnotateWithNumberOfGroupcommentsFromAdmins(Tes
     def test_annotate_with_number_of_groupcomments_from_admins_multiple_comments(self):
         testgroup = mommy.make('core.AssignmentGroup')
         feedbackset1 = devilry_group_mommy_factories.feedbackset_first_attempt_published(
-            group=testgroup,
-            is_last_in_group=False)
+            group=testgroup)
         feedbackset2 = devilry_group_mommy_factories.feedbackset_new_attempt_unpublished(
             group=testgroup,
-            is_last_in_group=True)
+            )
         mommy.make('devilry_group.GroupComment',
                    feedback_set=feedbackset1,
                    comment_type=GroupComment.COMMENT_TYPE_GROUPCOMMENT,
@@ -3134,11 +3136,10 @@ class TestAssignmentGroupQuerySetAnnotateWithNumberOfImageAnnotationcomments(Tes
     def test_annotate_with_number_of_imageannotationcomments_multiple_comments(self):
         testgroup = mommy.make('core.AssignmentGroup')
         feedbackset1 = devilry_group_mommy_factories.feedbackset_first_attempt_published(
-            group=testgroup,
-            is_last_in_group=False)
+            group=testgroup)
         feedbackset2 = devilry_group_mommy_factories.feedbackset_new_attempt_unpublished(
             group=testgroup,
-            is_last_in_group=True)
+            )
         mommy.make('devilry_group.ImageAnnotationComment',
                    feedback_set=feedbackset1,
                    comment_type=ImageAnnotationComment.COMMENT_TYPE_IMAGEANNOTATION,
@@ -3241,11 +3242,10 @@ class TestAssignmentGroupQuerySetAnnotateWithNumberOfImageannotationcommentsFrom
     def test_annotate_with_number_of_imageannotationcomments_from_students_multiple_comments(self):
         testgroup = mommy.make('core.AssignmentGroup')
         feedbackset1 = devilry_group_mommy_factories.feedbackset_first_attempt_published(
-            group=testgroup,
-            is_last_in_group=False)
+            group=testgroup)
         feedbackset2 = devilry_group_mommy_factories.feedbackset_new_attempt_unpublished(
             group=testgroup,
-            is_last_in_group=True)
+            )
         mommy.make('devilry_group.ImageAnnotationComment',
                    feedback_set=feedbackset1,
                    comment_type=ImageAnnotationComment.COMMENT_TYPE_IMAGEANNOTATION,
@@ -3354,11 +3354,10 @@ class TestAssignmentGroupQuerySetAnnotateWithNumberOfImageannotationcommentsFrom
     def test_annotate_with_number_of_imageannotationcomments_from_examiners_multiple_comments(self):
         testgroup = mommy.make('core.AssignmentGroup')
         feedbackset1 = devilry_group_mommy_factories.feedbackset_first_attempt_published(
-            group=testgroup,
-            is_last_in_group=False)
+            group=testgroup)
         feedbackset2 = devilry_group_mommy_factories.feedbackset_new_attempt_unpublished(
             group=testgroup,
-            is_last_in_group=True)
+            )
         mommy.make('devilry_group.ImageAnnotationComment',
                    feedback_set=feedbackset1,
                    comment_type=ImageAnnotationComment.COMMENT_TYPE_IMAGEANNOTATION,
@@ -3467,11 +3466,10 @@ class TestAssignmentGroupQuerySetAnnotateWithNumberOfImageannotationcommentsFrom
     def test_annotate_with_number_of_imageannotationcomments_from_admins_multiple_comments(self):
         testgroup = mommy.make('core.AssignmentGroup')
         feedbackset1 = devilry_group_mommy_factories.feedbackset_first_attempt_published(
-            group=testgroup,
-            is_last_in_group=False)
+            group=testgroup)
         feedbackset2 = devilry_group_mommy_factories.feedbackset_new_attempt_unpublished(
             group=testgroup,
-            is_last_in_group=True)
+            )
         mommy.make('devilry_group.ImageAnnotationComment',
                    feedback_set=feedbackset1,
                    comment_type=ImageAnnotationComment.COMMENT_TYPE_IMAGEANNOTATION,
@@ -3686,6 +3684,10 @@ class TestAssignmentGroupQuerySetAnnotateWithNumberOfPrivateImageannotationcomme
 
 
 class TestAssignmentGroupQuerySetAnnotateWithNumberOfPublishedFeedbacksets(TestCase):
+
+    def setUp(self):
+        AssignmentGroupDbCacheCustomSql().initialize()
+
     def test_annotate_with_number_of_published_feedbacksets_zero(self):
         mommy.make('core.AssignmentGroup')
         self.assertEqual(
@@ -3697,15 +3699,12 @@ class TestAssignmentGroupQuerySetAnnotateWithNumberOfPublishedFeedbacksets(TestC
         testgroup = mommy.make('core.AssignmentGroup')
         mommy.make('devilry_group.FeedbackSet',
                    group=testgroup,
-                   is_last_in_group=None,
                    grading_published_datetime=timezone.now())
         mommy.make('devilry_group.FeedbackSet',
                    group=testgroup,
-                   is_last_in_group=None,
                    grading_published_datetime=timezone.now())
         mommy.make('devilry_group.FeedbackSet',
                    group=testgroup,
-                   is_last_in_group=None,
                    grading_published_datetime=None)
         mommy.make('devilry_group.FeedbackSet',
                    group=testgroup,
@@ -3720,15 +3719,12 @@ class TestAssignmentGroupQuerySetAnnotateWithNumberOfPublishedFeedbacksets(TestC
         testgroup2 = mommy.make('core.AssignmentGroup')
         mommy.make('devilry_group.FeedbackSet',
                    group=testgroup1,
-                   is_last_in_group=None,
                    grading_published_datetime=timezone.now())
         mommy.make('devilry_group.FeedbackSet',
                    group=testgroup1,
-                   is_last_in_group=None,
                    grading_published_datetime=timezone.now())
         mommy.make('devilry_group.FeedbackSet',
                    group=testgroup2,
-                   is_last_in_group=None,
                    grading_published_datetime=None)
         mommy.make('devilry_group.FeedbackSet',
                    group=testgroup2,
@@ -3754,11 +3750,9 @@ class TestAssignmentGroupQuerySetFilterWithPublishedFeedbackOrComments(TestCase)
         mommy.make('core.AssignmentGroup')
         mommy.make('devilry_group.FeedbackSet',
                    group=testgroup_with_published_feedback,
-                   is_last_in_group=None,
                    grading_published_datetime=timezone.now())
         mommy.make('devilry_group.FeedbackSet',
                    group=testgroup_with_unpublished_feedback,
-                   is_last_in_group=None,
                    grading_published_datetime=None)
         mommy.make('devilry_group.GroupComment',
                    feedback_set__group=testgroup_with_groupcomment,
@@ -3806,9 +3800,9 @@ class TestAssignmentGroupQuerySetAnnotateWithHasUnpublishedFeedbackset(TestCase)
     def test_annotate_with_has_unpublished_feedbackdraft_multiple_feedbacksets(self):
         testgroup = mommy.make('core.AssignmentGroup')
         devilry_group_mommy_factories.feedbackset_first_attempt_published(
-            group=testgroup, is_last_in_group=None)
+            group=testgroup)
         devilry_group_mommy_factories.feedbackset_new_attempt_unpublished(
-            group=testgroup, is_last_in_group=True, grading_points=1)
+            group=testgroup, grading_points=1)
         self.assertTrue(
             AssignmentGroup.objects.annotate_with_has_unpublished_feedbackdraft()
             .first().has_unpublished_feedbackdraft)
@@ -3955,7 +3949,7 @@ class TestAssignmentGroupQuerySetAnnotateWithNumberOfCommentfilesFromStudents(Te
         testgroup = mommy.make('core.AssignmentGroup')
 
         feedbackset1 = devilry_group_mommy_factories.feedbackset_first_attempt_published(
-            group=testgroup, is_last_in_group=None)
+            group=testgroup)
         mommy.make('devilry_comment.CommentFile',
                    comment=mommy.make('devilry_group.GroupComment',
                                       feedback_set=feedbackset1,
@@ -3983,7 +3977,7 @@ class TestAssignmentGroupQuerySetAnnotateWithNumberOfCommentfilesFromStudents(Te
     def test_multiple_groups(self):
         testgroup1 = mommy.make('core.AssignmentGroup')
         feedbackset1 = devilry_group_mommy_factories.feedbackset_first_attempt_published(
-            group=testgroup1, is_last_in_group=None)
+            group=testgroup1)
         mommy.make('devilry_comment.CommentFile',
                    comment=mommy.make('devilry_group.GroupComment',
                                       feedback_set=feedbackset1,
@@ -3999,7 +3993,7 @@ class TestAssignmentGroupQuerySetAnnotateWithNumberOfCommentfilesFromStudents(Te
 
         testgroup2 = mommy.make('core.AssignmentGroup')
         feedbackset2 = devilry_group_mommy_factories.feedbackset_first_attempt_published(
-            group=testgroup2, is_last_in_group=None)
+            group=testgroup2)
         mommy.make('devilry_comment.CommentFile',
                    comment=mommy.make('devilry_group.GroupComment',
                                       feedback_set=feedbackset2,
